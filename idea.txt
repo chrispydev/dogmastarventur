@@ -1,0 +1,5 @@
+- Add a search functionality for worker to search for customers they have collected from
+
+- Add a functionality where only 10 information is shown at a time.
+
+- 

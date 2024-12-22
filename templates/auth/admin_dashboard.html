@@ -1,0 +1,17 @@
+{% extends 'base.html' %} {% block content %}
+<section>
+  <h1>Record Collection</h1>
+  <form method="post">
+    {% csrf_token %}
+    <label for="customer">Customer:</label>
+    <select name="customer_id" id="customer">
+      {% for customer in customers %}
+      <option value="{{ customer.id }}">{{ customer.name }}</option>
+      {% endfor %}
+    </select>
+    <label for="amount">Amount:</label>
+    <input type="number" name="amount" id="amount" required />
+    <button type="submit">Submit</button>
+  </form>
+</section>
+{% endblock content %}

@@ -1,0 +1,141 @@
+/* Styles for screens 320px or below */
+@media (max-width: 320px) {
+  .menuauth_detail h3 {
+    font-size: 1.5rem;
+  }
+
+  .menuauth__lint a {
+    font-size: 1.3rem;
+  }
+}
+
+/* Styles for screens 640px or above */
+@media (min-width: 640px) {
+}
+
+/* Styles for screens 768px or above */
+@media (min-width: 768px) {
+  .auth__div button {
+    outline: none;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    text-transform: uppercase;
+  }
+
+  .logo img {
+    width: 150px;
+    height: 130px;
+  }
+
+  .search__product {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    left: 30%;
+    border: 1px solid var(--primary-color-light);
+    height: 50px;
+    width: 300px;
+  }
+
+  .search__product input {
+    border: 0;
+    outline: none;
+    color: var(--primary-color-light);
+  }
+
+  .search__button {
+    border: none;
+    background-color: var(--primary-color);
+    height: 40px;
+    padding: 1rem 1rem 2rem 1rem;
+  }
+
+  .search__button i {
+    color: #fff;
+  }
+
+  .down__menu {
+    max-width: 400px !important;
+    position: fixed;
+    top: 3.4rem;
+    /* top: 4rem; */
+    right: 12%;
+    z-index: 20;
+    height: 0;
+    display: none;
+  }
+
+  .down__menu-show {
+    display: block;
+  }
+
+  .user__detail {
+    display: inline-block;
+  }
+
+  .login__div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .login__div i {
+    margin-right: 0.3rem;
+  }
+
+  .login__div a {
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .menu__bars {
+    display: none;
+  }
+
+  .mobile__sidemenu {
+    display: none;
+  }
+
+  .menuauth__lint {
+    text-align: left;
+    width: 100%;
+    margin-top: 0.4rem;
+    margin-bottom: -0.4rem;
+    background-color: #fff;
+    padding: 0.4rem 1rem 0.4rem 1rem;
+    position: relative;
+  }
+
+  .menuauth__lint:hover::after {
+    bottom: 0.4rem;
+  }
+
+  .menuauth__lint a {
+    font-weight: 600;
+    font-size: 0.89rem;
+  }
+}
+
+/* CSS for screens with a minimum width of 768px to 991px */
+@media (min-width: 1024px) {
+  .search__product {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    left: 37%;
+    border: 1px solid var(--primary-color-light);
+    height: 50px;
+    width: 300px;
+  }
+
+  .cart {
+    margin-right: 2rem;
+  }
+}
+
+/* CSS for screens with a minimum width of 992px to 1199px */
+@media (min-width: 1280px) {
+}

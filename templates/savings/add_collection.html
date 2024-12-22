@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Add Collection</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="customer">Customer</label>
+            {{ form.customer }}
+        </div>
+        <div class="form-group">
+            <label for="amount">Collection Amount</label>
+            {{ form.amount }}
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+    </form>
+</div>
+{% endblock content %}

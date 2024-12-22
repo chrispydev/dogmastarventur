@@ -1,0 +1,10 @@
+.record__collection {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1rem;
+}
+
+.record__collection h1 {
+  text-align: center;
+  font-size: 1.2rem;
+}

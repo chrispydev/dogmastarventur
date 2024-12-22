@@ -1,0 +1,118 @@
+/* Resetting default styles */
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol,
+li {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary-color: #4169e1;
+  --primary-background: #4169e1e1;
+  --border-color: #007bff40;
+  --primary-color-light: #7a8589;
+  --text-color: #4444;
+}
+
+/* Global styles */
+body {
+  /* font-family: 'Mulish', sans-serif; */
+  /* font-family: 'PT Sans', sans-serif; */
+  /* font-family: 'Ubuntu variable', 'Ubuntu', -apple-system, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif; */
+  /* font-family: 'Fira Sans', sans-serif; */
+  /* font-family: 'Ubuntu', sans-serif; */
+  font-family: "Poppins", sans-serif;
+  /* font-family: 'avenir-lt-w01_35-light1475496', sans-serif; */
+  /* font-family: 'Sono', sans-serif !important; */
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--text-color) !important;
+  text-decoration: none;
+  font-weight: bolder;
+}
+
+a:hover {
+  cursor: pointer;
+}
+
+.shadow {
+  box-shadow: 0 10px 6px var(--primary-color);
+}
+
+.fa-solid,
+.fa-regular {
+  color: var(--primary-color);
+  font-size: 1.3rem;
+}
+
+img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+button {
+  cursor: pointer;
+}
+
+.footer {
+  margin-top: 3rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.wrapper {
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 425px) {
+  .footer {
+    flex-direction: column;
+  }
+}
+
+.border__bottom {
+  border-bottom: 1px solid var(--primary-background);
+}
+
+.border__top {
+  border-top: 1px solid var(--primary-background);
+}
+
+.card__border {
+  border-color: var(--primary-color) !important;
+}
+
+.table thead th {
+  border-bottom: 1px solid var(--primary-background) !important;
+  border-color: var(--primary-background) !important;
+}
+
+tr {
+  border-color: var(--primary-background) !important;
+}
+
+.table-bordered {
+  border: 1px solid var(--primary-background) !important;
+}

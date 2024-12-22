@@ -1,0 +1,87 @@
+# Django project directories
+__pycache__/
+*.py[cod]
+# *.sqlite3
+
+# Django settings files
+# settings*.py
+# local_settings.py
+
+# Static files
+staticfiles/
+*.pyc
+*.pyo
+
+# Media files
+media/
+
+# Virtual environment
+venv/
+env/
+*.env
+
+# Development and deployment files
+*.log
+*.pot
+*.pyc
+*.swp
+*.swo
+*.mo
+*.orig
+*.bak
+*.db
+*.sqlite
+*.psql
+# *.db.sqlite3
+*.env
+*.env.*
+*.envrc
+
+# IDE-specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Dependency management tools
+pip-log.txt
+pip-wheel-metadata/
+pipenv.lock
+
+# node_modules
+node_modules/
+
+# extra code not to be added
+# AmazonScraper/
+
+# root static file
+
+# aws key_pair
+remgeeshop.pem
+
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+
+# "local" is for Unix domain socket connections only
+local   all             all                                     trust
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            scram-sha-256
+# IPv6 local connections:
+host    all             all             ::1/128                 scram-sha-256
+# Allow replication connections from localhost, by a user with the
+# replication privilege.
+local   replication     all                                     peer
+host    replication     all             127.0.0.1/32            scram-sha-256
+host    replication     all             ::1/128                 scram-sha-256
+
+server{
+# db.sqlite3
+
+# keys
+keys/
+
+# hide media files
+media/
+
+AmazonScraper/
+
+# static

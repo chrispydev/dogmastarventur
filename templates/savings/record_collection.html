@@ -1,0 +1,23 @@
+{% extends 'base.html' %} {% block content %}
+<section class="record__collection wrapper">
+  <div>
+    <h1>Dogmastarventur</h1>
+  </div>
+  {% comment %}
+  <article>
+    <form method="post">
+      {% csrf_token %}
+      <label for="customer">Customer:</label>
+      <select name="customer_id" id="customer">
+        {% for customer in customers %}
+        <option value="{{ customer.id }}">{{ customer.name }}</option>
+        {% endfor %}
+      </select>
+      <label for="amount">Amount:</label>
+      <input type="number" name="amount" id="amount" required />
+      <button type="submit">Submit</button>
+    </form>
+  </article>
+  {% endcomment %}
+</section>
+{% endblock content %}

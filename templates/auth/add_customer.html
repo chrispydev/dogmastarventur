@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between">
+        <h2>Add Customer</h2>
+        <a class="add__button" href="{% url 'add_collection' %}">
+            <i class="fa-solid fa-money-check"></i> Add Collection
+        </a>
+    </div>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="name">Name</label>
+            {{ form.name }}
+        </div>
+        <div class="form-group">
+            <label for="next_of_kin">Next of Kin</label>
+            {{ form.next_of_kin }}
+        </div>
+        <div class="form-group">
+            <label for="balance">Balance</label>
+            {{ form.balance }}
+        </div>
+        <div class="form-group">
+            <label for="customer_image">Customer Image</label>
+            {{ form.customer_image }}
+        </div>
+        <button type="submit" class="form__submit">Add Customer</button>
+    </form>
+</div>
+{% endblock content %}

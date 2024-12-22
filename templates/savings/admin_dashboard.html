@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {% block content %}
+<h1>Admin Dashboard</h1>
+<h2>Customers</h2>
+<ul>
+  {% for customer in customers %}
+  <li>{{ customer.name }}: ${{ customer.balance }}</li>
+  {% endfor %}
+</ul>
+<h2>Workers</h2>
+<ul>
+  {% for worker in workers %}
+  <li>{{ worker.user.username }}</li>
+  {% endfor %}
+</ul>
+{% endblock content %}

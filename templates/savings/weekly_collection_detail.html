@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Collections for Week {{ week }}</h3>
+
+    <table class="table table-bordered card__border mt-3">
+        <thead>
+            <tr>
+                <th>Customer Name</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for collection in page_obj %}
+            <tr>
+                <td>{{ collection.customer.name }}</td>
+                <td>GH₵{{ collection.amount }}</td>
+                <td>{{ collection.date|date:"Y-m-d" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">No collections available for this week</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination for Weekly Collections -->
+    <div class="pagination">
+        <span class="mr-2">Page: {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        <div class="btn-group">
+            {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn btn-light">First</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-light">Previous</a>
+            {% endif %}
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-light">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-light">Last</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

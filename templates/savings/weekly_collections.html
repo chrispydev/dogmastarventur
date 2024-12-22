@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Search Form -->
+    <form method="GET" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="search" value="{{ search_query }}" class="form-control"
+                placeholder="Search by Name, Next of Kin, or Amount">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    <!-- Weekly Collections -->
+    <h3>Collections Per Week</h3>
+    <table class="table table-bordered card__border mt-3">
+        <thead>
+            <tr>
+                <th>Week</th>
+                <th>Total Collections</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for week, data in week_collections %}
+            <tr>
+                <td>{{ week }}</td>
+                <td>GH₵{{ data.total }}</td>
+                <td><a href="{% url 'weekly_collection_detail' week %}" class="btn btn-info">View Details</a></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">No collections available for this worker</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination for Weekly Collections -->
+    <div class="pagination mt-3">
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        <div class="btn-group">
+            {% if page_obj.has_previous %}
+            <a href="?page=1&search={{ search_query }}" class="btn btn-light">First</a>
+            <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}"
+                class="btn btn-light">Previous</a>
+            {% endif %}
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}" class="btn btn-light">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}" class="btn btn-light">Last</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
