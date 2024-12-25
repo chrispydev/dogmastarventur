@@ -1,0 +1,74 @@
+{% load static %}
+<div class="static">
+    <nav class="nav__bar">
+        <!-- logo -->
+        <a href="{% url 'worker_dashboard' %}" class="logo">
+            <img src="{% static 'img/logo.webp' %}" alt="">
+        </a>
+</div>
+
+<!-- user -->
+<div class="user__detail">
+    {% if user.is_authenticated %}
+    <div class="login__div">
+        <button class="auth__div mr-4">
+            <i class="fa-solid fa-user"></i>
+            <p class="auth__name">{{ user.username }}</p>
+        </button>
+        <form class="auth__div" action="{% url 'logout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="auth__status">Logout</button>
+        </form>
+    </div>
+    {% else %}
+    <div class="auth__div">
+        <i class="fa-solid fa-user-lock auth__status"></i>
+        <a href="{% url 'login' %}" class="auth__status">Login</a>
+    </div>
+    {% endif %}
+</div>
+<!-- add to cart -->
+<div class="cart__section__header">
+    <button id="toggleBtn" class="cart__button menu__bars cart__div">
+        <i class="fa-solid fa-bars-staggered"></i>
+    </button>
+</div>
+</nav>
+</div>
+<!-- drop down menu -->
+<div id="dropdown__menu" class="shadow down__menu">
+    <div class="menuauth__lint">
+        {% if user.is_authenticated %}
+        <i class="fa-regular fa-circle-dot"></i>
+        <a class="logout__button" href="{% url 'logout' %}">Logout</a>
+        {% else %}
+        <i class="fa-regular fa-circle-dot"></i>
+        <a class="logout__button" href="{% url 'login' %}">Login</a>
+        {% endif %}
+    </div>
+</div>
+<!-- mobile menu -->
+<div id="navopen__toggle" class="mobile__sidemenu">
+    <div class="menuauth_detail">
+        {% if user.is_authenticated %}
+        <h3 class="">Welcome,{{ user.username }}</h3>
+        {% else %}
+        <h3>Welcome Guest User</h3>
+        {% endif %}
+    </div>
+    <hr />
+    <div class="menu__auth -mt-4">
+        <div class="menuauth__lint">
+            <i class="fa-solid fa-user"></i> <a>Account</a>
+        </div>
+        <div class="menuauth__lint">
+            {% if user.is_authenticated %}
+            <i class="fa-regular fa-circle-dot"></i>
+            <a class="logout__button" href="{% url 'logout' %}">Logout</a>
+            {% else %}
+            <i class="fa-regular fa-circle-dot"></i>
+            <a class="logout__button" href="{% url 'login' %}">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
