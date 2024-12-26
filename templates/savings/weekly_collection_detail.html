@@ -4,28 +4,31 @@
 <div class="container mt-5">
     <h3>Collections for Week {{ week }}</h3>
 
-    <table class="table table-bordered card__border mt-3">
-        <thead>
-            <tr>
-                <th>Customer Name</th>
-                <th>Amount</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for collection in page_obj %}
-            <tr>
-                <td>{{ collection.customer.name }}</td>
-                <td>GH₵{{ collection.amount }}</td>
-                <td>{{ collection.date|date:"Y-m-d" }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="3" class="text-center">No collections available for this week</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="collection__table">
+
+        <table class="table table-bordered card__border mt-3">
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for collection in page_obj %}
+                <tr>
+                    <td>{{ collection.customer.name }}</td>
+                    <td>GH₵{{ collection.amount }}</td>
+                    <td>{{ collection.date|date:"Y-m-d" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">No collections available for this week</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     <!-- Pagination for Weekly Collections -->
     <div class="pagination">

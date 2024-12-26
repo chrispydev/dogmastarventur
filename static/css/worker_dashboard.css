@@ -14,9 +14,11 @@
   margin-right: 10px;
   padding: 0.2rem 0.4rem;
   color: white !important;
-  border-radius: 0.8rem;
+  border-radius: 0.4rem;
   transition: all 0.3s;
   font-size: 0.9rem;
+  font-weight: normal;
+  margin-bottom: 0.5rem;
 }
 
 .add__button i {

@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from savings.models import Customer, Worker, Collection
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView, DetailView
 from auth.forms import CustomerForm
 
 
@@ -89,3 +90,15 @@ class AddCustomerView(View):
             # Update with your redirect URL
             return redirect('worker_dashboard')
         return render(request, 'auth/add_customer.html', {'form': form})
+
+
+class CustomerListView(ListView):
+    model = Customer
+    template_name = 'customers/customer_list.html'
+    context_object_name = 'customers'
+
+
+class CustomerDetailView(DetailView):
+    model = Customer
+    template_name = 'customers/customer_detail.html'
+    context_object_name = 'customer'

@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-5">
     <div class="d-flex justify-content-between">
-        <h2>Add Customer</h2>
+        <h2 class="add__customer">Add Customer</h2>
         <a class="add__button" href="{% url 'add_collection' %}">
             <i class="fa-solid fa-money-check"></i> Add Collection
         </a>
@@ -26,7 +26,9 @@
             <label for="customer_image">Customer Image</label>
             {{ form.customer_image }}
         </div>
-        <button type="submit" class="form__submit">Add Customer</button>
+        <button type="submit" class="add__button">
+            <i class="fa-solid fa-plus"></i>
+            Add Customer</button>
     </form>
 </div>
 {% endblock content %}

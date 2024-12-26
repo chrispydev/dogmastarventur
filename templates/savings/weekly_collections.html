@@ -26,7 +26,8 @@
             <tr>
                 <td>{{ week }}</td>
                 <td>GH₵{{ data.total }}</td>
-                <td><a href="{% url 'weekly_collection_detail' week %}" class="btn btn-info">View Details</a></td>
+                <td><a href="{% url 'weekly_collection_detail' week %}" class="add__button">View
+                        Details</a></td>
             </tr>
             {% empty %}
             <tr>
