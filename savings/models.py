@@ -63,25 +63,12 @@ class Collection(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateTimeField(auto_now_add=True)  # Changed to DateTimeField
-    # Store geographic coordinates (lat, long)
-    google_maps_url = models.URLField(
-        max_length=200, blank=True, null=True)  # Google Maps URL link
 
     def save(self, *args, **kwargs):
         # Automatically update customer's balance when saving
         self.customer.balance += self.amount
         self.customer.save()
-
-        # Generate Google Maps URL if latitude and longitude are provided
-        if self.latitude is not None and self.longitude is not None:
-            self.google_maps_url = self.get_google_maps_url(
-                self.latitude, self.longitude)
-
         super().save(*args, **kwargs)
 
-    def get_google_maps_url(self, latitude, longitude):
-        """Generates the Google Maps URL for the location"""
-        return f'https://www.google.com/maps?q={latitude},{longitude}'
-
     def __str__(self):
-        return f"Collection by {self.worker} for {self.customer} on {self.date} at {self.latitude}, {self.longitude}"
+        return f"Collection by {self.worker} for {self.customer} on {self.date}"
