@@ -4,6 +4,7 @@
   <div>
     <a href="{% url 'worker_dashboard' %}" class="logo">
       <img src="{% static 'img/logo.webp' %}" alt="">
+      <span class="logo__text">Dogmastarventur</span>
     </a>
   </div>
 
@@ -38,28 +39,31 @@
   <div class="user__detail__mobile shadow">
     {% if user.is_authenticated %}
     <div class="login__div__mobile">
-      <p class="border__bottom mr-4">
+      <p class=" mr-4">
         <i class="fa-solid fa-user"></i>
         <span class="auth__name">Welcome {{ user.username }}</span>
       </p>
-      <a href="{% url 'worker_dashboard' %}" class="border__bottom">
+      <a href="{% url 'worker_dashboard' %}" class="">
         <i class="fa-solid fa-users"></i>
         Customers
       </a>
-      <a href="{% url 'worker_dashboard' %}" class="border__bottom">
+      <a href="{% url 'worker_dashboard' %}" class="">
         <i class="fa-solid fa-dollar"></i>
         Collections
       </a>
       <form class="" action="{% url 'logout' %}" method="post">
         {% csrf_token %}
-        <button type="submit" class="auth__status">Logout</button>
+        <button type="submit" class="auth__status__mobile"> <i class="fa-solid fa-user-lock auth__status__mobile"></i>
+          Logout</button>
       </form>
     </div>
     {% else %}
+    {% comment %}
     <div class="">
-      <i class="fa-solid fa-user-lock auth__status"></i>
-      <a href="{% url 'login' %}" class="auth__status">Login</a>
+      <i class="fa-solid fa-user-lock auth__status__mobile"></i>
+      <a href="{% url 'login' %}" class="auth__status__mobile">Login</a>
     </div>
+    {% endcomment %}
     {% endif %}
   </div>
 

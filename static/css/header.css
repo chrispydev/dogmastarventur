@@ -27,6 +27,12 @@
   object-position: center center;
 }
 
+.logo__text {
+  font-size: 0.95rem;
+  font-weight: medium;
+  color: var(--primary-color);
+}
+
 .user__detail {
   display: none;
 }
@@ -46,7 +52,7 @@
 .login__div__mobile {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   flex-direction: column;
   padding: 0.8rem 0rem;
 }
@@ -55,12 +61,23 @@
   margin-bottom: 0.8rem;
   margin-left: 0.3rem;
 }
+.login__div__mobile > *:hover {
+  cursor: pointer;
+  padding-left: 1rem;
+  transition: padding-left 0.3s ease-in-out;
+}
 
 .login__div__mobile a,
 .login__div__mobile a:hover {
   text-decoration: none;
   color: #000 !important;
   font-weight: normal;
+}
+
+.auth__status__mobile {
+  border: 0;
+  outline: 0;
+  background-color: #fff;
 }
 
 .nav__bar__btn {

@@ -4,6 +4,10 @@
 
 /* Styles for screens 640px or above */
 @media (min-width: 640px) {
+  .logo__text {
+    font-size: 1.3rem;
+    font-weight: bold;
+  }
 }
 
 /* Styles for screens 768px or above */

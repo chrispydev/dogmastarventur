@@ -40,6 +40,10 @@ body {
   overflow-x: hidden;
 }
 
+.container {
+  margin-top: 5.5rem;
+}
+
 a {
   color: var(--text-color) !important;
   text-decoration: none;
