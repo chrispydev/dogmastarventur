@@ -94,11 +94,11 @@ class AddCustomerView(View):
 
 class CustomerListView(ListView):
     model = Customer
-    template_name = 'customers/customer_list.html'
+    template_name = 'auth/customer_list.html'
     context_object_name = 'customers'
 
 
 class CustomerDetailView(DetailView):
     model = Customer
-    template_name = 'customers/customer_detail.html'
+    template_name = 'auth/customer_detail.html'
     context_object_name = 'customer'

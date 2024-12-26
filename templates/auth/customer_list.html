@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="record__collection wrapper">
+    <div>
+        <h1>Customer List</h1>
+    </div>
+    <article>
+        <table class="customer__table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ customer.name }}</td>
+                    <td>{{ customer.email }}</td>
+                    <td>{{ customer.phone }}</td>
+                    <td>
+                        <a class="details__link" href="{% url 'customer_detail' customer.id %}">
+                            View Details
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+</section>
+{% endblock content %}

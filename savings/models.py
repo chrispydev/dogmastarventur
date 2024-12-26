@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image, ImageFile
 from django.core.files.storage import default_storage
-
+from datetime import datetime
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True  # Allow truncated images to be loaded
 
@@ -13,6 +13,7 @@ class Customer(models.Model):
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     customer_image = models.ImageField(
         upload_to='media_file', default='default.jpg')
+    joined = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -21,20 +22,20 @@ class Customer(models.Model):
         super().save(*args, **kwargs)
 
         try:
-            img = Image.open(self.customer_image.path)
+            img_path = self.customer_image.path  # Get the image path
+            img = Image.open(img_path)
 
-            # Convert RGBA to RGB if needed
-            if img.mode == 'RGBA':
-                img = img.convert('RGB')
+            # Ensure compatibility by converting RGBA to RGB
+            if img.mode in ("RGBA", "P"):
+                img = img.convert("RGB")
 
-            # Resize image if larger than 800x800
-            if img.height > 800 or img.width > 800:
-                output_size = (800, 800)
-                img.thumbnail(output_size)
+            # Resize only if the image is larger than the desired size
+            max_size = 800
+            if img.height > max_size or img.width > max_size:
+                img.thumbnail((max_size, max_size), Image.ANTIALIAS)
 
-            # Save the image using the storage backend
-            with default_storage.open(self.customer_image.name, 'wb') as f:
-                img.save(f, 'JPEG')
+            # Save the resized image back to the same path
+            img.save(img_path, format='JPEG', quality=90)
         except Exception as e:
             print(f"Error processing image: {e}")
 
