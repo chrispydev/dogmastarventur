@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
+<section class="woker__dashboard">
   <!-- Add function button -->
-  <div class="ml-auto mb-4">
+  <div class="function__button ml-auto mb-4">
     <a class="add__button" href="{% url 'add_customer' %}">
       <i class="fa-solid fa-users"></i> Add Customers
     </a>
@@ -13,84 +13,77 @@
   </div>
 
   <!-- Overview Section -->
-  <div class="row my-4">
-    <div class="col-md-3">
-      <div class="card card__border">
-        <div class="card-body text-center">
-          <h5>Total Weekly Collections</h5>
+  <div>
+    <section>
+      <div class="overview__section">
+        <h1 class="">Summary</h1>
+        <div class="summary__item">
+          <h5>Total Weekly Collections:</h5>
           <h2>GH₵{{ total_weekly_collections }}</h2>
         </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card card__border">
-        <div class="card-body text-center">
-          <h5>Total Collections Today</h5>
+        <div class="summary__item">
+          <h5>Total Collections Today:</h5>
           <h2>GH₵{{ total_collections_today }}</h2>
         </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card card__border">
-        <div class="card-body text-center">
-          <h5>Number of Pending Customers</h5>
+        <div class="summary__item">
+          <h5>Number of Pending Customers:</h5>
           <h2>{{ pending_customers|length }}</h2>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Assigned Customers Section -->
-  <h3>Customers Collected From</h3>
-  <table class="table table-bordered card__border mt-3">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Next of Kin</th>
-        <th>Balance</th>
-        <th>Last Payment</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for customer in customers %}
-      <tr>
-        <td>{{ customer.name }}</td>
-        <td>{{ customer.next_of_kin }}</td>
-        <td>GH₵{{ customer.balance }}</td>
-        <td>
-          {% with customer.collection_set.last as last_payment %}
-          {% if last_payment %}
-          {{ last_payment.date|date:"Y-m-d" }}
-          {% else %}
-          No payments yet
-          {% endif %}
-          {% endwith %}
-        </td>
-        <td>
-          {% if customer in pending_customers %}
-          <span class="text-danger">Pending</span>
-          {% else %}
-          <span class="text-success">Paid</span>
-          {% endif %}
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="5" class="text-center">No customers available</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      <!-- Assigned Customers Section -->
+      <h3 class="collection__heading">Customers Collected From</h3>
+      <div class="collection__table">
+        <table class="table table-bordered card__border">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Next of Kin</th>
+              <th>Balance</th>
+              <th>Last Payment</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for customer in customers %}
+            <tr>
+              <td>{{ customer.name }}</td>
+              <td>{{ customer.next_of_kin }}</td>
+              <td>GH₵{{ customer.balance }}</td>
+              <td>
+                {% with customer.collection_set.last as last_payment %}
+                {% if last_payment %}
+                {{ last_payment.date|date:"Y-m-d" }}
+                {% else %}
+                No payments yet
+                {% endif %}
+                {% endwith %}
+              </td>
+              <td>
+                {% if customer in pending_customers %}
+                <span class="text-danger">Pending</span>
+                {% else %}
+                <span class="text-success">Paid</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="text-center">No customers available</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
-  <!-- Pagination for Collections -->
-  <!-- <div class="pagination">
-    <span class="mr-2">Page: {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-    <div class="btn-group">
-      {% if page_obj.has_previous %}
-      <a href="?page=1&search={{ search_query }}" class="btn btn-light">First</a>
-      <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}" class="btn btn-light">Previous</a>
-      {% endif %}
+      <!-- Pagination for Collections -->
+      <!-- <div class="pagination">
+        <span class="mr-2">Page: {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        <div class="btn-group">
+          {% if page_obj.has_previous %}
+          <a href="?page=1&search={{ search_query }}" class="btn btn-light">First</a>
+          <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}" class="btn btn-light">Previous</a>
+          {% endif %}
       {% if page_obj.has_next %}
       <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}" class="btn btn-light">Next</a>
       <a href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}" class="btn btn-light">Last</a>
@@ -98,16 +91,19 @@
     </div>
   </div> -->
 
-  <!-- Recent Transactions Section -->
-  <h3>Recent Transactions</h3>
-  <ul class="list-group mt-3">
-    {% for transaction in recent_transactions %}
-    <li class="list-group-item">
-      {{ transaction.customer.name }} - GH₵{{ transaction.amount }} - {{ transaction.date|date:"Y-m-d h:i:s a" }}
-    </li>
-    {% empty %}
-    <li class="list-group-item text-center">No recent transactions available</li>
-    {% endfor %}
-  </ul>
-</div>
-{% endblock content %}
+      <!-- Recent Transactions Section -->
+      <article class="transaction">
+        <h3 class="transaction__title">Recent Transactions</h3>
+        <ul class="list-group mt-3">
+          {% for transaction in recent_transactions %}
+          <li class="list-group-item">
+            {{ transaction.customer.name }} - GH₵{{ transaction.amount }} - {{ transaction.date|date:"Y-m-d h:i:s a" }}
+          </li>
+          {% empty %}
+          <li class="list-group-item text-center">No recent transactions available</li>
+          {% endfor %}
+        </ul>
+      </article>
+
+    </section>
+    {% endblock content %}

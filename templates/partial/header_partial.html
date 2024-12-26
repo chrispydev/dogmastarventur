@@ -9,24 +9,22 @@
   </div>
 
   <!-- user tablet to Desktop -->
-  <div class="user__detail">
+  <div class="user__detail__desktop">
     {% if user.is_authenticated %}
-    <div class="login__div">
-      <p class=" mr-4">
-        <i class="fa-solid fa-user"></i>
-        <span class="auth__name">{{ user.username }}</span>
-      </p>
-      <a href="{% url 'worker_dashboard' %}" class="logo">
-        Customers
-      </a>
-      <a href="{% url 'worker_dashboard' %}" class="logo">
-        Collections
-      </a>
-      <form class="" action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit" class="auth__status">Logout</button>
-      </form>
-    </div>
+    <a href="{% url 'worker_dashboard' %}" class="logo">
+      <i class="fa-solid fa-users"></i>
+      Customers
+    </a>
+    <a href="{% url 'worker_dashboard' %}" class="logo">
+      <i class="fa-solid fa-book"></i>
+      Collections
+    </a>
+    <form class="" action="{% url 'logout' %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="auth__status">
+        <i class="fa-solid fa-power-off"></i>
+        Logout</button>
+    </form>
     {% else %}
     <div class="">
       <i class="fa-solid fa-user-lock auth__status"></i>
@@ -53,7 +51,7 @@
       </a>
       <form class="" action="{% url 'logout' %}" method="post">
         {% csrf_token %}
-        <button type="submit" class="auth__status__mobile"> <i class="fa-solid fa-user-lock auth__status__mobile"></i>
+        <button type="submit" class="auth__status__mobile"> <i class="fa-solid fa-power-off auth__status__mobile"></i>
           Logout</button>
       </form>
     </div>

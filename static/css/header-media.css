@@ -12,6 +12,26 @@
 
 /* Styles for screens 768px or above */
 @media (min-width: 768px) {
+  .nav__bar__btn__div {
+    display: none;
+  }
+
+  .user__detail__desktop {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+  .user__detail__desktop > a {
+    color: #111 !important;
+    font-weight: normal;
+  }
+
+  .auth__status {
+    border: 0;
+    outline: 0;
+    background-color: #fff;
+  }
 }
 
 /* CSS for screens with a minimum width of 768px to 991px */

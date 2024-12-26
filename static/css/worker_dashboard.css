@@ -1,11 +1,26 @@
+.woker__dashboard {
+  padding: 0 1rem;
+}
+
+.function__button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .add__button {
   background-color: var(--primary-color);
   border: 1px solid var(--primary-color);
   margin-right: 10px;
-  padding: 0.5rem 1rem;
+  padding: 0.2rem 0.4rem;
   color: white !important;
   border-radius: 0.8rem;
   transition: all 0.3s;
+  font-size: 0.9rem;
+}
+
+.add__button i {
+  font-size: 0.9rem;
 }
 
 .add__button:hover,
@@ -17,6 +32,47 @@
 
 .add__button i {
   color: white !important;
+}
+
+.overview__section h1 {
+  text-decoration: underline;
+  text-decoration-color: var(--primary-color);
+  font-size: 2rem;
+}
+
+.summary__item {
+  display: flex;
+  justify-content: flex-start;
+  align-self: center;
+  gap: 0.5rem;
+}
+
+.summary__item > h5 {
+  font-size: 1rem;
+}
+
+.summary__item > h2 {
+  font-size: 1.2rem;
+}
+
+.collection__heading {
+  font-size: 1.5rem;
+  margin-top: 1rem;
+}
+
+.collection__table {
+  /* max-width: 420px; */
+  overflow-x: auto !important;
+}
+
+.transaction {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.transaction__title {
+  margin-top: 1rem;
+  margin-top: 1rem;
 }
 
 .pagination {

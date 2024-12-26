@@ -24,24 +24,17 @@ li {
 
 /* Global styles */
 body {
-  /* font-family: 'Mulish', sans-serif; */
-  /* font-family: 'PT Sans', sans-serif; */
-  /* font-family: 'Ubuntu variable', 'Ubuntu', -apple-system, 'Segoe UI', 'Roboto',
-    'Oxygen', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif; */
-  /* font-family: 'Fira Sans', sans-serif; */
-  /* font-family: 'Ubuntu', sans-serif; */
   font-family: "Poppins", sans-serif;
-  /* font-family: 'avenir-lt-w01_35-light1475496', sans-serif; */
-  /* font-family: 'Sono', sans-serif !important; */
   font-weight: 300;
   font-size: 14px;
   line-height: 1.5;
   overflow-x: hidden;
 }
 
-.container {
+.main__wrapper {
   margin-top: 5.5rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 a {

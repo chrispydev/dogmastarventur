@@ -33,12 +33,12 @@
   color: var(--primary-color);
 }
 
-.user__detail {
+.user__detail__desktop {
   display: none;
 }
 
 .user__detail__mobile {
-  /* display: none; */
+  display: none;
   position: absolute;
   top: 100%;
   right: 0;
