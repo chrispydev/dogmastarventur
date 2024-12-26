@@ -10,9 +10,8 @@
                 <tr>
                     <th>#</th>
                     <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Details</th>
+                    <th>Next Of Kin</th>
+                    <th>Balance</th>
                 </tr>
             </thead>
             <tbody>
@@ -20,8 +19,7 @@
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td>{{ customer.name }}</td>
-                    <td>{{ customer.email }}</td>
-                    <td>{{ customer.phone }}</td>
+                    <td>{{ customer.next_of_kin }}</td>
                     <td>
                         <a class="details__link" href="{% url 'customer_detail' customer.id %}">
                             View Details

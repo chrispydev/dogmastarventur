@@ -2,6 +2,7 @@ from auth.forms import UserRegisterForm
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.views import View
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.views import PasswordResetView
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
@@ -97,8 +98,36 @@ class CustomerListView(ListView):
     template_name = 'auth/customer_list.html'
     context_object_name = 'customers'
 
+    def get_queryset(self):
+        # Get the logged-in worker
+        worker = get_object_or_404(Worker, user=self.request.user)
+        # Retrieve customers the worker has taken collections from
+        customer_ids = Collection.objects.filter(
+            worker=worker).values_list('customer_id', flat=True)
+        return Customer.objects.filter(id__in=customer_ids).distinct()
+
 
 class CustomerDetailView(DetailView):
     model = Customer
     template_name = 'auth/customer_detail.html'
     context_object_name = 'customer'
+
+    def get_queryset(self):
+        # Get the logged-in worker
+        worker = get_object_or_404(Worker, user=self.request.user)
+        # Retrieve customers the worker has taken collections from
+        customer_ids = Collection.objects.filter(
+            worker=worker).values_list('customer_id', flat=True)
+        return Customer.objects.filter(id__in=customer_ids).distinct()
+
+
+# class CustomerListView(ListView):
+#     model = Customer
+#     template_name = 'auth/customer_list.html'
+#     context_object_name = 'customers'
+
+
+# class CustomerDetailView(DetailView):
+#     model = Customer
+#     template_name = 'auth/customer_detail.html'
+#     context_object_name = 'customer'
