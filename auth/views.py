@@ -9,8 +9,9 @@ from django.contrib.auth.models import User
 from savings.models import Customer, Worker, Collection
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView
-from auth.forms import CustomerForm
+from auth.forms import CustomerForm, AdminRegisterForm
 from django.db.models import Sum, Count
+from django.contrib.auth.models import Group
 
 
 class RegisterForm(View):
@@ -167,3 +168,46 @@ class CustomerAdminDetailView(DetailView):
     model = Customer
     template_name = 'auth/customer_detail.html'
     context_object_name = 'customer'
+
+
+class AdminRegisterView(View):
+    def get(self, request):
+        admin_form = AdminRegisterForm()
+        template_name = 'auth/admin_register.html'
+        return render(request, template_name, {'admin_form': admin_form})
+
+    def post(self, request):
+        form = AdminRegisterForm(request.POST)
+        if form.is_valid():
+            admin_user = form.save(commit=False)
+            admin_user.is_staff = True
+            admin_user.is_superuser = True
+            admin_user.set_password(form.cleaned_data['password1'])
+            admin_user.save()
+            messages.success(request, f'Admin account created for {
+                             admin_user.username}!')
+            return redirect('admin_dashboard')
+        else:
+            admin_form = AdminRegisterForm()
+            template_name = 'auth/admin_register.html'
+        return render(request, template_name, {'form': form, 'admin_form': admin_form})
+
+
+# class CustomAdminLoginView(View):
+#     def post(request):
+#         form = AuthenticationForm(data=request.POST)
+#         if form.is_valid():
+#             user = form.get_user()
+#             login(request, user)
+#             if user.is_superuser:
+#                 return redirect('admin_dashboard')
+#             else:
+#                 return redirect('worker_dashboard')
+#         else:
+#             admin_form = AuthenticationForm()
+#         return render(request, 'auth/login.html', {'form': form, 'admin_form': admin_form})
+
+#     def get(self, request):
+#         user_form = UserRegisterForm()
+#         template_name = 'auth/register.html'
+#         return render(request, template_name, {'user_form': user_form})

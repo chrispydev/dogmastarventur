@@ -49,6 +49,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # browser reload
     "django_browser_reload.middleware.BrowserReloadMiddleware",
+    # custom middleware
+    'dogmastarventures.middleware.role_based_redirect.RoleBasedRedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'dogmastarventures.urls'

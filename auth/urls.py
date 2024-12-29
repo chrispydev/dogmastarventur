@@ -1,8 +1,10 @@
 from django.contrib.auth import views
 from django.urls import path
-from auth.views import RegisterForm, CustomPasswordResetDoneView, AdminDashboardView, CustomLogoutView, AddCustomerView, CustomerListView, CustomerDetailView, CustomerAdminDetailView, CustomerAdminListView
+from auth.views import RegisterForm, CustomPasswordResetDoneView, AdminDashboardView, CustomLogoutView, AddCustomerView, CustomerListView, CustomerDetailView, CustomerAdminDetailView, CustomerAdminListView, AdminRegisterView
 
 urlpatterns = [
+    # path('admin-login/', CustomAdminLoginView.as_view(), name='admin_login'),
+    path('admin-register/', AdminRegisterView.as_view(), name='admin_register'),
     path('admin-dashboard/', AdminDashboardView.as_view(), name='admin_dashboard'),
     path('admin-customers/', CustomerAdminListView.as_view(),
          name='admin_customer_list'),
