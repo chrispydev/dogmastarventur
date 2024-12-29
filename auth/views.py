@@ -144,16 +144,9 @@ class AllCollectionsView(View):
 
 
 class CollectionDetailView(View):
-    def get(self, request, *args, **kwargs):
-        collection = Collection.objects.select_related(
-            'worker', 'customer').order_by('-date')
-        # Display 10 collections per page
-        paginator = Paginator(collection, 10)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-
+    def get(self, request, pk, *args, **kwargs):
+        collection = get_object_or_404(Collection, pk=pk)
         context = {
-            'page_obj': page_obj,
             'collection': collection
         }
         return render(request, 'savings/collection_detail.html', context)
