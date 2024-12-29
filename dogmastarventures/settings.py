@@ -51,7 +51,7 @@ MIDDLEWARE = [
     "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
-ROOT_URLCONF = 'dogmastarventur.urls'
+ROOT_URLCONF = 'dogmastarventures.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'dogmastarventur.wsgi.application'
+WSGI_APPLICATION = 'dogmastarventures.wsgi.application'
 
 
 # Database

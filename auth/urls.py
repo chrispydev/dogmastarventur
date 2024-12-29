@@ -1,12 +1,16 @@
 from django.contrib.auth import views
 from django.urls import path
-from auth.views import RegisterForm, CustomPasswordResetDoneView, AdminDashboardView, CustomLogoutView, AddCustomerView, CustomerListView, CustomerDetailView
+from auth.views import RegisterForm, CustomPasswordResetDoneView, AdminDashboardView, CustomLogoutView, AddCustomerView, CustomerListView, CustomerDetailView, CustomerAdminDetailView, CustomerAdminListView
 
 urlpatterns = [
+    path('admin-dashboard/', AdminDashboardView.as_view(), name='admin_dashboard'),
+    path('admin-customers/', CustomerAdminListView.as_view(),
+         name='admin_customer_list'),
+    path('admin-customers/<int:pk>/', CustomerAdminDetailView.as_view(),
+         name='admin_customer_detail'),
     path('customers/', CustomerListView.as_view(), name='customer_list'),
     path('customers/<int:pk>/', CustomerDetailView.as_view(), name='customer_detail'),
     path('add-customer/', AddCustomerView.as_view(), name='add_customer'),
-    path('admin-dashboard/', AdminDashboardView.as_view(), name='admin_dashboard'),
     path('register/', RegisterForm.as_view(), name='register'),
     path("login/", views.LoginView.as_view(
         template_name="auth/login.html"), name="login",),

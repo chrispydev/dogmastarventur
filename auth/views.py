@@ -10,6 +10,7 @@ from savings.models import Customer, Worker, Collection
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView
 from auth.forms import CustomerForm
+from django.db.models import Sum, Count
 
 
 class RegisterForm(View):
@@ -121,13 +122,48 @@ class CustomerDetailView(DetailView):
         return Customer.objects.filter(id__in=customer_ids).distinct()
 
 
-# class CustomerListView(ListView):
-#     model = Customer
-#     template_name = 'auth/customer_list.html'
-#     context_object_name = 'customers'
+class AdminDashboardView(View):
+    def get(self, request, *args, **kwargs):
+        # Total statistics
+        total_customers = Customer.objects.count()
+        total_workers = Worker.objects.count()
+        total_collections = Collection.objects.aggregate(
+            total_amount=Sum('amount'))['total_amount'] or 0
+        total_pending_customers = Customer.objects.filter(
+            collection__isnull=True
+        ).count()
+
+        # Weekly collections
+        from datetime import timedelta
+        from django.utils.timezone import now
+
+        one_week_ago = now() - timedelta(days=7)
+        weekly_collections = Collection.objects.filter(date__gte=one_week_ago)
+        total_weekly_collections = weekly_collections.aggregate(
+            total_amount=Sum('amount'))['total_amount'] or 0
+
+        # Recent collections
+        recent_collections = Collection.objects.order_by('-date')[:5]
+
+        # Pass data to the context
+        context = {
+            'total_customers': total_customers,
+            'total_workers': total_workers,
+            'total_collections': total_collections,
+            'total_pending_customers': total_pending_customers,
+            'total_weekly_collections': total_weekly_collections,
+            'recent_collections': recent_collections,
+        }
+        return render(request, 'auth/admin_dashboard.html', context)
 
 
-# class CustomerDetailView(DetailView):
-#     model = Customer
-#     template_name = 'auth/customer_detail.html'
-#     context_object_name = 'customer'
+class CustomerAdminListView(ListView):
+    model = Customer
+    template_name = 'auth/customer_list.html'
+    context_object_name = 'customers'
+
+
+class CustomerAdminDetailView(DetailView):
+    model = Customer
+    template_name = 'auth/customer_detail.html'
+    context_object_name = 'customer'
