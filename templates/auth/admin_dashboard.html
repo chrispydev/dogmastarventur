@@ -56,8 +56,7 @@
   <ul class="list-group mt-3">
     {% for transaction in recent_collections %}
     <li class="list-group-item">
-      {{ transaction.customer.name }} - ${{ transaction.amount }} - {{
-      transaction.date|date:"Y-m-d h:i A" }}
+      {{ transaction.customer.name }} - ${{ transaction.amount }} - {{ transaction.date|date:"Y-m-d h:i:s a" }}
     </li>
     {% empty %}
     <li class="list-group-item text-center">No recent transactions available</li>

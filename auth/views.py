@@ -1,4 +1,5 @@
 from auth.forms import UserRegisterForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.views import View
@@ -11,6 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView
 from auth.forms import CustomerForm, AdminRegisterForm
 from django.db.models import Sum, Count
+from django.core.paginator import Paginator
 from django.contrib.auth.models import Group
 
 
@@ -123,6 +125,40 @@ class CustomerDetailView(DetailView):
         return Customer.objects.filter(id__in=customer_ids).distinct()
 
 
+class AllCollectionsView(View):
+    """View to display all collections."""
+
+    def get(self, request, *args, **kwargs):
+        collections = Collection.objects.select_related(
+            'worker', 'customer').order_by('-date')
+        # Display 10 collections per page
+        paginator = Paginator(collections, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context = {
+            'collections': collections,
+            'page_obj': page_obj
+        }
+        return render(request, 'savings/all_collections.html', context)
+
+
+class CollectionDetailView(View):
+    def get(self, request, *args, **kwargs):
+        collection = Collection.objects.select_related(
+            'worker', 'customer').order_by('-date')
+        # Display 10 collections per page
+        paginator = Paginator(collection, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context = {
+            'page_obj': page_obj,
+            'collection': collection
+        }
+        return render(request, 'savings/collection_detail.html', context)
+
+
 class AdminDashboardView(View):
     def get(self, request, *args, **kwargs):
         # Total statistics
@@ -162,6 +198,7 @@ class CustomerAdminListView(ListView):
     model = Customer
     template_name = 'auth/customer_list.html'
     context_object_name = 'customers'
+    paginate_by = 10  # Number of customers per page
 
 
 class CustomerAdminDetailView(DetailView):
@@ -193,21 +230,21 @@ class AdminRegisterView(View):
         return render(request, template_name, {'form': form, 'admin_form': admin_form})
 
 
-# class CustomAdminLoginView(View):
-#     def post(request):
-#         form = AuthenticationForm(data=request.POST)
-#         if form.is_valid():
-#             user = form.get_user()
-#             login(request, user)
-#             if user.is_superuser:
-#                 return redirect('admin_dashboard')
-#             else:
-#                 return redirect('worker_dashboard')
-#         else:
-#             admin_form = AuthenticationForm()
-#         return render(request, 'auth/login.html', {'form': form, 'admin_form': admin_form})
+class CustomAdminLoginView(View):
+    def post(self, request):
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            if user.is_superuser:
+                return redirect('admin_dashboard')
+            else:
+                return redirect('worker_dashboard')
+        else:
+            form = AuthenticationForm()
+        return render(request, 'auth/login.html', {'form': form})
 
-#     def get(self, request):
-#         user_form = UserRegisterForm()
-#         template_name = 'auth/register.html'
-#         return render(request, template_name, {'user_form': user_form})
+    def get(self, request):
+        form = AuthenticationForm()
+        template_name = 'auth/login.html'
+        return render(request, template_name, {'form': form})

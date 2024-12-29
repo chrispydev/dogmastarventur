@@ -14,8 +14,14 @@
         <p><strong>Balance:</strong> GH₵{{ customer.balance }}</p>
         <p><strong>Joined:</strong> {{ customer.joined }}</p>
     </article>
+    {% if user.is_superuser %}
+    <div class="actions">
+        <a class="back__link" href="{% url 'admin_customer_list' %}">Back to List</a>
+    </div>
+    {% else %}
     <div class="actions">
         <a class="back__link" href="{% url 'customer_list' %}">Back to List</a>
     </div>
+    {% endif %}
 </section>
 {% endblock content %}

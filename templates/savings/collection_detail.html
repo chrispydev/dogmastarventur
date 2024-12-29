@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>All Collections</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Customer</th>
+            <th>Worker</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for collection in collections %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ collection.customer.name }}</td>
+            <td>{{ collection.worker.user.username }}</td>
+            <td>${{ collection.amount }}</td>
+            <td>{{ collection.date|date:"Y-m-d H:i A" }}</td>
+            <td><a href="{% url 'collection_detail' collection.id %}" class="btn btn-primary">View Details</a></td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">No collections available.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
