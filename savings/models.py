@@ -10,15 +10,33 @@ import os
 ImageFile.LOAD_TRUNCATED_IMAGES = True  # Allow truncated images to be loaded
 
 
+class Worker(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
+
+
+def set_customer_creator(worker):
+    """Callback function to set the created_by field when a Worker is deleted."""
+    # Assuming that the worker who created this customer is still available
+    return worker.created_by  # Adjust this as needed based on your logic
+
+
 class Customer(models.Model):
-    name = models.CharField(max_length=150, default='name')
-    next_of_kin = models.CharField(max_length=100, default='next_of_kin')
+    name = models.CharField(max_length=150)
+    next_of_kin = models.CharField(max_length=100)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     customer_image = models.ImageField(
         upload_to='media_file', default='default.jpg')
-    joined = models.DateTimeField(auto_now_add=True)
-    account_number = models.CharField(
-        max_length=20, unique=True, blank=True, null=True)  # Field for account number
+    created_by = models.ForeignKey(
+        Worker,
+        # Set the worker who created this when the worker is deleted
+        on_delete=models.SET(set_customer_creator),
+        null=True,
+        blank=True,
+        related_name='customers_created'
+    )
 
     def __str__(self):
         return self.name
@@ -49,13 +67,6 @@ class Customer(models.Model):
         # Create a random account number (e.g., ACC-XXXX, where XXXX is a 4-digit number)
         account_number = 'ACC-' + ''.join(random.choices(string.digits, k=4))
         return account_number
-
-
-class Worker(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.user.username
 
 
 class Collection(models.Model):
