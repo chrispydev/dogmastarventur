@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="record__collection customer__wrapper">
+    <div>
+        <h1>Customer Details</h1>
+    </div>
+    <article class="customer__details shadow">
+        <div class="customer__image">
+            <img src="{{customer.customer_image.url}}" alt="{{customer.name}}">
+        </div>
+        <p><strong>Name:</strong> {{ customer.name }}</p>
+        <p><strong>Account Number:</strong> {{ customer.account_number }}</p>
+        <p><strong>Next Of Kin:</strong> {{ customer.next_of_kin }}</p>
+        <p><strong>Balance:</strong> GH₵{{ customer.balance }}</p>
+        <p><strong>Created By:</strong> {{ customer.created_by }}</p>
+    </article>
+    <div class="actions">
+        <a class="back__link" href="{% url 'admin_customer_list' %}">Back to List</a>
+    </div>
+
+</section>
+{% endblock content %}

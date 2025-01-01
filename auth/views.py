@@ -90,7 +90,12 @@ class AddCustomerView(View):
     def post(self, request, *args, **kwargs):
         form = CustomerForm(request.POST, request.FILES)
         if form.is_valid():
+            user = request.user
+            worker = Worker.objects.get(user=user)
             form.save()
+            customer = Customer.objects.get(name=form.data['name'])
+            customer.created_by = worker
+            customer.save()
             messages.success(request, "Customer added successfully!")
             # Update with your redirect URL
             return redirect('worker_dashboard')
@@ -189,14 +194,14 @@ class AdminDashboardView(View):
 
 class CustomerAdminListView(ListView):
     model = Customer
-    template_name = 'auth/customer_list.html'
+    template_name = 'auth/customer_admin_list.html'
     context_object_name = 'customers'
     paginate_by = 10  # Number of customers per page
 
 
 class CustomerAdminDetailView(DetailView):
     model = Customer
-    template_name = 'auth/customer_detail.html'
+    template_name = 'auth/customer_admin_detail.html'
     context_object_name = 'customer'
 
 
