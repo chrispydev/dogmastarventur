@@ -1,12 +1,13 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const toggleButton = document.querySelector(".nav__bar__btn");
-    const toggleDiv = document.querySelector(".user__detail__mobile");
+document.addEventListener("DOMContentLoaded", function () {
+  const toggleDiv = document.querySelector(".user__detail__mobile");
+  const toggleBtn = document.querySelector(".nav__bar__btn");
 
-    toggleButton.addEventListener("click", function() {
-        if (toggleDiv.style.display === "none") {
-            toggleDiv.style.display = "block";
-        } else {
-            toggleDiv.style.display = "none";
-        }
-    });
+  toggleBtn.addEventListener("click", function () {
+    // Toggle visibility based on computed style
+    if (getComputedStyle(toggleDiv).display === "none") {
+      toggleDiv.style.display = "block";
+    } else {
+      toggleDiv.style.display = "none";
+    }
+  });
 });

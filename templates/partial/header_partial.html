@@ -1,6 +1,6 @@
 {% load static %}
 <nav class="nav__bar shadow">
-  <!-- logo -->
+  <!-- Logo -->
   {% if user.is_superuser %}
   <div>
     <a href="{% url 'admin_dashboard' %}" class="logo">
@@ -17,102 +17,59 @@
   </div>
   {% endif %}
 
-  <!-- user tablet to Desktop -->
+  <!-- User Desktop -->
   <div class="user__detail__desktop">
     {% if user.is_authenticated %}
     {% if user.is_superuser %}
-    <!-- Admin-specific links -->
-    <a href="{% url 'admin_dashboard' %}" class="logo">
-      <i class="fa-solid fa-tachometer-alt"></i>
-      Admin Dashboard
-    </a>
-    <a href="{% url 'admin_customer_list' %}" class="">
-      <i class="fa-solid fa-dollar"></i>
-      Customers
-    </a>
-    <a href="{% url 'all_collections' %}" class="">
-      <i class="fa-solid fa-dollar"></i>
-      Collection
-    </a>
+    <a href="{% url 'admin_dashboard' %}" class="logo"><i class="fa-solid fa-tachometer-alt"></i> Admin Dashboard</a>
+    <a href="{% url 'admin_customer_list' %}"><i class="fa-solid fa-dollar"></i> Customers</a>
+    <a href="{% url 'all_collections' %}"><i class="fa-solid fa-dollar"></i> Collections</a>
     {% else %}
-    <!-- Worker-specific links -->
-    <a href="{% url 'customer_list' %}" class="logo">
-      <i class="fa-solid fa-users"></i>
-      Customers
-    </a>
-    <a href="{% url 'weekly_collections' %}" class="logo">
-      <i class="fa-solid fa-book"></i>
-      Collections
-    </a>
+    <a href="{% url 'customer_list' %}" class="logo"><i class="fa-solid fa-users"></i> Customers</a>
+    <a href="{% url 'weekly_collections' %}" class="logo"><i class="fa-solid fa-book"></i> Collections</a>
     {% endif %}
-    <!-- Common logout button -->
-    <form class="" action="{% url 'logout' %}" method="post">
+    <form action="{% url 'logout' %}" method="post">
       {% csrf_token %}
-      <button type="submit" class="auth__status">
-        <i class="fa-solid fa-power-off"></i>
-        Logout</button>
+      <button type="submit" class="auth__status"><i class="fa-solid fa-power-off"></i> Logout</button>
     </form>
     {% else %}
-    <div class="">
+    <div>
       <i class="fa-solid fa-user-lock auth__status"></i>
       <a href="{% url 'login' %}" class="auth__status">Login</a>
     </div>
     {% endif %}
   </div>
 
-  <!-- user mobile -->
+  <!-- User Mobile -->
   <div class="user__detail__mobile shadow">
     {% if user.is_authenticated %}
+    {% if user.is_superuser %}
     <div class="login__div__mobile">
-      <p class="mr-4">
-        <i class="fa-solid fa-user"></i>
-        <span class="auth__name">Welcome {{ user.username }}</span>
-      </p>
-      {% if user.is_superuser %}
-      <!-- Admin-specific links for mobile -->
-      <a href="{% url 'admin_dashboard' %}" class="">
-        <i class="fa-solid fa-tachometer-alt"></i>
-        Admin Dashboard
-      </a>
-      <a href="{% url 'admin_customer_list' %}" class="">
-        <i class="fa-solid fa-dollar"></i>
-        Customers
-      </a>
-      <a href="{% url 'all_collections' %}" class="">
-        <i class="fa-solid fa-dollar"></i>
-        Collection
-      </a>
-      {% else %}
-      <!-- Worker-specific links for mobile -->
-      <a href="{% url 'customer_list' %}" class="">
-        <i class="fa-solid fa-users"></i>
-        Customers
-      </a>
-      <a href="{% url 'weekly_collections' %}" class="">
-        <i class="fa-solid fa-dollar"></i>
-        Collections
-      </a>
-      {% endif %}
-      <!-- Common logout button -->
-      <form class="" action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit" class="auth__status__mobile">
-          <i class="fa-solid fa-power-off auth__status__mobile"></i>
-          Logout
-        </button>
-      </form>
+      <p class="mr-4"><i class="fa-solid fa-user"></i> Welcome {{ user.username }}</p>
+      <a href="{% url 'admin_dashboard' %}"><i class="fa-solid fa-tachometer-alt"></i> Admin Dashboard</a>
+      <a href="{% url 'admin_customer_list' %}"><i class="fa-solid fa-dollar"></i> Customers</a>
+      <a href="{% url 'all_collections' %}"><i class="fa-solid fa-dollar"></i> Collections</a>
     </div>
     {% else %}
-    <div class="">
+    <div class="login__div__mobile">
+      <a href="{% url 'customer_list' %}"><i class="fa-solid fa-users"></i> Customers</a>
+      <a href="{% url 'weekly_collections' %}"><i class="fa-solid fa-dollar"></i> Collections</a>
+    </div>
+    {% endif %}
+    <form action="{% url 'logout' %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="auth__status__mobile"><i class="fa-solid fa-power-off"></i> Logout</button>
+    </form>
+    {% else %}
+    <div>
       <i class="fa-solid fa-user-lock auth__status__mobile"></i>
       <a href="{% url 'login' %}" class="auth__status__mobile">Login</a>
     </div>
     {% endif %}
   </div>
 
+  <!-- Mobile Toggle Button -->
   <div class="nav__bar__btn__div">
-    <button class="nav__bar__btn" onclick="toggleNav()">
-      <i class="fa-solid fa-bars"></i>
-    </button>
+    <button class="nav__bar__btn"><i class="fa-solid fa-bars"></i></button>
   </div>
 </nav>
