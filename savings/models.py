@@ -37,6 +37,8 @@ class Customer(models.Model):
         blank=True,
         related_name='customers_created'
     )
+    joined = models.DateTimeField(
+        auto_now_add=True)  # Changed to DateTimeField
 
     def __str__(self):
         return self.name
