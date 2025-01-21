@@ -20,7 +20,9 @@
 </head>
 
 <body>
+  {% if request.path != '/accounts/customer/dashboard/' and request.path != '/accounts/customer/login/' %}
   {% include 'partial/header_partial.html' %}
+  {% endif %}
   <main class="main__wrapper">
     {% if messages %}
     <div class="col-md-12 mt-4">

@@ -1,0 +1,21 @@
+.dashboard__logo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.dashboard__logo img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.dashboard__content {
+  text-align: left;
+}
+
+.customer__table {
+  width: 100%;
+  border-collapse: collapse;
+}

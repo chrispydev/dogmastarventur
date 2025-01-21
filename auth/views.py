@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from savings.models import Customer, Worker, Collection
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView
-from auth.forms import CustomerForm, AdminRegisterForm
+from auth.forms import CustomerForm, AdminRegisterForm, CustomerLoginForm
 from django.db.models import Sum, Count
 from django.core.paginator import Paginator
 from django.contrib.auth.models import Group
@@ -238,11 +238,46 @@ class CustomAdminLoginView(View):
                 return redirect('admin_dashboard')
             else:
                 return redirect('worker_dashboard')
-        else:
-            form = AuthenticationForm()
+        # else:
+        #     form = AuthenticationForm()
         return render(request, 'auth/login.html', {'form': form})
 
     def get(self, request):
         form = AuthenticationForm()
         template_name = 'auth/login.html'
         return render(request, template_name, {'form': form})
+
+
+class CustomerDashboardView(View):
+    template_name = 'auth/customer_dashboard.html'
+
+    def get(self, request):
+        customer_id = request.session.get('customer_id')
+        if not customer_id:
+            return redirect('customer_login')
+
+        customer = Customer.objects.get(id=customer_id)
+        collections = customer.collection_set.all().order_by(
+            '-date')  # Assuming the relationship exists
+        return render(request, self.template_name, {
+            'customer': customer,
+            'collections': collections,
+        })
+
+
+class CustomerLoginView(View):
+    template_name = 'auth/customer_login.html'
+
+    def get(self, request):
+        form = CustomerLoginForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = CustomerLoginForm(request.POST)
+        if form.is_valid():
+            customer = form.cleaned_data['customer']
+            # Save customer info in the session for simplicity
+            request.session['customer_id'] = customer.id
+            # Redirect to a customer dashboard
+            return redirect('customer_dashboard')
+        return render(request, self.template_name, {'form': form})

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<section class="container">
+    <div class="dashboard__logo">
+        <img src="{% static 'img/logo.webp' %}" alt="">
+        <span class="logo__text">DOGMA STAR VENTURES</span>
+    </div>
+    <div class="dashboard__content">
+        <h2>Welcome, {{ customer.name }}</h2>
+        <p><strong>Account Number:</strong> {{ customer.account_number }}</p>
+        <p><strong>Balance:</strong> ${{ customer.balance }}</p>
+
+        <h3>Your Collections</h3>
+        <table class="customer__table">
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for collection in collections %}
+                <tr>
+                    <td>${{ collection.amount }}</td>
+                    <td>{{ collection.date }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">No collections found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

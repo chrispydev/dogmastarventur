@@ -1,0 +1,39 @@
+<!-- auth/customer_collections.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Your Collections</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Amount</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for collection in collections %}
+        <tr>
+            <td>{{ collection.amount }}</td>
+            <td>{{ collection.date }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">No collections found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Add pagination controls -->
+<div class="pagination">
+    {% if collections.has_previous %}
+    <a href="?page={{ collections.previous_page_number }}">Previous</a>
+    {% endif %}
+
+    <span>Page {{ collections.number }} of {{ collections.paginator.num_pages }}</span>
+
+    {% if collections.has_next %}
+    <a href="?page={{ collections.next_page_number }}">Next</a>
+    {% endif %}
+</div>
+{% endblock %}

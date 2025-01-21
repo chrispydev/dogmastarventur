@@ -5,7 +5,7 @@ from django.core.files.storage import default_storage
 from datetime import datetime
 import random
 import string
-import os
+from django.utils.timezone import now
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True  # Allow truncated images to be loaded
 
@@ -39,6 +39,9 @@ class Customer(models.Model):
     )
     joined = models.DateTimeField(
         auto_now_add=True)  # Changed to DateTimeField
+    account_number = models.CharField(
+        max_length=20, unique=True, blank=True, null=True
+    )
 
     def __str__(self):
         return self.name
@@ -65,10 +68,14 @@ class Customer(models.Model):
             print(f"Error processing image: {e}")
 
     def generate_account_number(self):
-        """Generates a unique account number for each customer"""
-        # Create a random account number (e.g., ACC-XXXX, where XXXX is a 4-digit number)
-        account_number = 'ACC-' + ''.join(random.choices(string.digits, k=4))
-        return account_number
+        """Generates a unique account number for each customer."""
+        while True:
+            # Prefix with "ACC", current year, and a random alphanumeric string
+            account_number = f"ACC-{now().strftime('%Y%m%d')}-" + ''.join(
+                random.choices(string.ascii_uppercase + string.digits, k=6)
+            )
+            if not Customer.objects.filter(account_number=account_number).exists():
+                return account_number
 
 
 class Collection(models.Model):
