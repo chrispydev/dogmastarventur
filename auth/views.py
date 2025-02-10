@@ -219,8 +219,7 @@ class AdminRegisterView(View):
             admin_user.is_superuser = True
             admin_user.set_password(form.cleaned_data['password1'])
             admin_user.save()
-            messages.success(request, f'Admin account created for {
-                             admin_user.username}!')
+            messages.success(request, f'Admin account created for {admin_user.username}!')
             return redirect('admin_dashboard')
         else:
             admin_form = AdminRegisterForm()
