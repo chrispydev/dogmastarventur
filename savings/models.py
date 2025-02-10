@@ -40,14 +40,18 @@ class Customer(models.Model):
     joined = models.DateTimeField(
         auto_now_add=True)  # Changed to DateTimeField
     account_number = models.CharField(
-        max_length=20, unique=True, blank=True, null=True
+        max_length=30, unique=True, blank=True, null=True
     )
 
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        # Generate account_number if it doesn't already exist
+        if not self.account_number:
+            self.account_number = self.generate_account_number()
+
+        super().save(*args, **kwargs)  # Save the instance first to access image paths
 
         try:
             img_path = self.customer_image.path  # Get the image path
@@ -60,7 +64,7 @@ class Customer(models.Model):
             # Resize only if the image is larger than the desired size
             max_size = 800
             if img.height > max_size or img.width > max_size:
-                img.thumbnail((max_size, max_size), Image.ANTIALIAS)
+                img.thumbnail((max_size, max_size), Image.Resampling.LANCZOS)
 
             # Save the resized image back to the same path
             img.save(img_path, format='JPEG', quality=90)
@@ -71,7 +75,7 @@ class Customer(models.Model):
         """Generates a unique account number for each customer."""
         while True:
             # Prefix with "ACC", current year, and a random alphanumeric string
-            account_number = f"ACC-{now().strftime('%Y%m%d')}-" + ''.join(
+            account_number = f"DSV-ACC-{now().strftime('%Y%m%d')}-" + ''.join(
                 random.choices(string.ascii_uppercase + string.digits, k=6)
             )
             if not Customer.objects.filter(account_number=account_number).exists():
