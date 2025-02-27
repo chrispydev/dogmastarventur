@@ -25,7 +25,7 @@
       <div class="card card__border">
         <div class="card-body text-center">
           <h5>Total Collections</h5>
-          <h2>${{ total_collections }}</h2>
+          <h2>GH₵{{ total_collections }}</h2>
         </div>
       </div>
     </div>
@@ -45,7 +45,7 @@
       <div class="card card__border">
         <div class="card-body text-center">
           <h5>Total Weekly Collections</h5>
-          <h2>${{ total_weekly_collections }}</h2>
+          <h2>GH₵{{ total_weekly_collections }}</h2>
         </div>
       </div>
     </div>
@@ -56,7 +56,7 @@
   <ul class="list-group mt-3">
     {% for transaction in recent_collections %}
     <li class="list-group-item">
-      {{ transaction.customer.name }} - ${{ transaction.amount }} - {{ transaction.date|date:"Y-m-d h:i:s a" }}
+      {{ transaction.customer.name }} - GH₵{{ transaction.amount }} - {{ transaction.date|date:"Y-m-d h:i:s a" }}
     </li>
     {% empty %}
     <li class="list-group-item text-center">No recent transactions available</li>
