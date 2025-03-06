@@ -1,5 +1,5 @@
 from django import forms
-from .models import Collection
+from savings.models import Collection, Customer
 
 
 class CollectionForm(forms.ModelForm):
@@ -20,3 +20,9 @@ class CollectionForm(forms.ModelForm):
             'customer': 'Customer',
             'amount': 'Collection Amount',
         }
+
+
+
+class DeductionForm(forms.Form):
+    customer = forms.ModelChoiceField(queryset=Customer.objects.all(), label="Select Customer")
+    amount = forms.DecimalField(min_value=0.01, max_digits=10, decimal_places=2, label="Amount to Deduct")

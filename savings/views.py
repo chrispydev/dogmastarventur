@@ -9,6 +9,9 @@ from django.utils.timezone import now
 from django.contrib import messages
 from savings.forms import CollectionForm
 from django.db.models import Sum, Q
+from django.views.generic import FormView
+from django.urls import reverse_lazy
+from savings.forms import DeductionForm
 
 
 class WorkerDashboardView(LoginRequiredMixin, View):
@@ -242,3 +245,23 @@ class RecordCollectionView(LoginRequiredMixin, View):
         Collection.objects.create(
             worker=worker, customer=customer, amount=amount)
         return redirect('dashboard')
+
+
+
+class DeductBalanceView(FormView):
+    template_name = "dashboard/deduct_balance.html"
+    form_class = DeductionForm
+    success_url = reverse_lazy('deduct_balance')
+
+    def form_valid(self, form):
+        customer = form.cleaned_data['customer']
+        amount = form.cleaned_data['amount']
+
+        if customer.balance >= amount:
+            customer.balance -= amount
+            customer.save()
+            messages.success(self.request, f"${amount} has been deducted from {customer.name}'s balance.")
+        else:
+            messages.error(self.request, "Insufficient balance.")
+
+        return super().form_valid(form)
