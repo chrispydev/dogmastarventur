@@ -96,3 +96,11 @@ class Collection(models.Model):
 
     def __str__(self):
         return f"Collection by {self.worker} for {self.customer} on {self.date}"
+
+
+class CompanyAccount(models.Model):
+    balance = models.DecimalField(
+        max_digits=12, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        return f"Company Account - Balance: ${self.balance}"

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2 class="deduction__header">Deduct Funds from Customer</h2>
+    {% if user.is_superuser %}
+    <form method="post" class="deduction-form">
+        {% csrf_token %}
+
+        <div class="form-group margin">
+            <label>Select Deduction Type</label>
+            {{ form.deduction_type }}
+        </div>
+
+        <div id="customer-section" class="form-group margin__top">
+            <label for="{{ form.customer.id_for_label }}">{{ form.customer.label }}</label>
+            {{ form.customer }}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.amount.id_for_label }}">{{ form.amount.label }}</label>
+            {{ form.amount }}
+        </div>
+
+        <button type="submit" class="btn btn-danger">Deduct</button>
+    </form>
+
+
+    {% else %}
+    <p>You do not have permission to perform deductions.</p>
+    {% endif %}
+
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deductionType = document.querySelectorAll("input[name='deduction_type']");
+        const customerSection = document.getElementById("customer-section");
+
+        function toggleCustomerField() {
+            const selected = document.querySelector("input[name='deduction_type']:checked").value;
+            if (selected === "company") {
+                customerSection.style.display = "none";
+            } else {
+                customerSection.style.display = "block";
+            }
+        }
+
+        deductionType.forEach(radio => radio.addEventListener("change", toggleCustomerField));
+        toggleCustomerField();
+    });
+</script>
+{% endblock %}

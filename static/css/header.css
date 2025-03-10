@@ -57,11 +57,12 @@
   padding: 0.8rem 0rem;
 }
 
-.login__div__mobile > * {
+.login__div__mobile>* {
   margin-bottom: 0.8rem;
   margin-left: 0.3rem;
 }
-.login__div__mobile > *:hover {
+
+.login__div__mobile>*:hover {
   cursor: pointer;
   padding-left: 1rem;
   transition: padding-left 0.3s ease-in-out;

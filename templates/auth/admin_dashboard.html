@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-5">
-  <h1>Admin Dashboard</h1>
+<div class="container mt-8 admin__header">
+  <div class="d-flex justify-content-between">
+    <h1 class="admin__title">Admin Dashboard</h1>
+    <a class="add__button button__padding" href="{% url 'deduct_balance' %}">Redraw Money</a>
+  </div>
 
   <!-- Overview Section -->
   <div class="row my-4">

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
-from django.contrib.auth.mixins import LoginRequiredMixin
-from savings.models import Customer, Worker, Collection
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from savings.models import Customer, Worker, Collection, CompanyAccount
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import timedelta, datetime
@@ -247,21 +247,35 @@ class RecordCollectionView(LoginRequiredMixin, View):
         return redirect('dashboard')
 
 
-
 class DeductBalanceView(FormView):
-    template_name = "dashboard/deduct_balance.html"
+    template_name = "auth/deduct_balance.html"
     form_class = DeductionForm
     success_url = reverse_lazy('deduct_balance')
 
     def form_valid(self, form):
-        customer = form.cleaned_data['customer']
+        deduction_type = form.cleaned_data['deduction_type']
         amount = form.cleaned_data['amount']
 
-        if customer.balance >= amount:
-            customer.balance -= amount
-            customer.save()
-            messages.success(self.request, f"${amount} has been deducted from {customer.name}'s balance.")
-        else:
-            messages.error(self.request, "Insufficient balance.")
+        if deduction_type == 'customer':
+            customer = form.cleaned_data['customer']
+            if customer and customer.balance >= amount:
+                customer.balance -= amount
+                customer.save()
+                messages.success(
+                    self.request, f"GH₵{amount} has been deducted from {customer.name}'s balance.")
+            else:
+                messages.error(
+                    self.request, "Insufficient balance in customer's account.")
+
+        elif deduction_type == 'company':
+            company_account, _ = CompanyAccount.objects.get_or_create()
+            if company_account.balance >= amount:
+                company_account.balance -= amount
+                company_account.save()
+                messages.success(
+                    self.request, f"GH₵{amount} has been deducted from the company account.")
+            else:
+                messages.error(
+                    self.request, "Insufficient balance in the company account.")
 
         return super().form_valid(form)
