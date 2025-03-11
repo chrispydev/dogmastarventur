@@ -41,21 +41,24 @@
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const deductionType = document.querySelectorAll("input[name='deduction_type']");
-        const customerSection = document.getElementById("customer-section");
+   document.addEventListener("DOMContentLoaded", function () {
+    const deductionTypeField = document.querySelector("select[name='deduction_type']");
+    const customerSection = document.getElementById("customer-section");
 
-        function toggleCustomerField() {
-            const selected = document.querySelector("input[name='deduction_type']:checked").value;
-            if (selected === "company") {
-                customerSection.style.display = "none";
-            } else {
-                customerSection.style.display = "block";
-            }
+    function toggleCustomerField() {
+        if (deductionTypeField.value === "company") {
+            customerSection.style.display = "none";
+        } else {
+            customerSection.style.display = "block";
         }
+    }
 
-        deductionType.forEach(radio => radio.addEventListener("change", toggleCustomerField));
-        toggleCustomerField();
+    // Listen for changes
+    deductionTypeField.addEventListener("change", toggleCustomerField);
+
+    // Initial check on page load
+    toggleCustomerField();
     });
+
 </script>
 {% endblock %}

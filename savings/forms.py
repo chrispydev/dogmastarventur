@@ -1,5 +1,5 @@
 from django import forms
-from savings.models import Collection, Customer
+from savings.models import Collection, Customer, Deduction
 
 
 class CollectionForm(forms.ModelForm):
@@ -22,24 +22,16 @@ class CollectionForm(forms.ModelForm):
         }
 
 
-class DeductionForm(forms.Form):
-    DEDUCTION_CHOICES = [
-        ('customer', 'Customer Account'),
-        ('company', 'Company Account')
-    ]
-
+class DeductionForm(forms.ModelForm):
     deduction_type = forms.ChoiceField(
-        choices=DEDUCTION_CHOICES,
-        widget=forms.RadioSelect(attrs={'class': 'form-check-input'})
+        choices=Deduction.DEDUCTION_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
-
     customer = forms.ModelChoiceField(
         queryset=Customer.objects.all(),
         required=False,
-        label="Select Customer",
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-
     amount = forms.DecimalField(
         min_value=0.01,
         max_digits=10,
@@ -48,3 +40,22 @@ class DeductionForm(forms.Form):
         widget=forms.NumberInput(
             attrs={'class': 'form-control', 'placeholder': 'Enter amount'})
     )
+
+    class Meta:
+        model = Deduction
+        fields = ['deduction_type', 'customer', 'amount']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        deduction_type = cleaned_data.get("deduction_type")
+        customer = cleaned_data.get("customer")
+
+        if deduction_type == "customer" and not customer:
+            raise forms.ValidationError(
+                "Please select a customer for a customer deduction.")
+
+        if deduction_type == "company" and customer:
+            raise forms.ValidationError(
+                "Do not select a customer when deducting from the company account.")
+
+        return cleaned_data

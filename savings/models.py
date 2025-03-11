@@ -1,11 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image, ImageFile
-from django.core.files.storage import default_storage
-from datetime import datetime
+from django.utils.timezone import now
 import random
 import string
-from django.utils.timezone import now
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True  # Allow truncated images to be loaded
 
@@ -17,10 +15,25 @@ class Worker(models.Model):
         return self.user.username
 
 
-def set_customer_creator(worker):
-    """Callback function to set the created_by field when a Worker is deleted."""
-    # Assuming that the worker who created this customer is still available
-    return worker.created_by  # Adjust this as needed based on your logic
+class CompanyAccount(models.Model):
+    balance = models.DecimalField(
+        max_digits=12, decimal_places=2, default=0.00)
+
+    @classmethod
+    def get_instance(cls):
+        """Ensures there is only one company account."""
+        instance, _ = cls.objects.get_or_create(id=1)
+        return instance
+
+    def update_balance(self):
+        """Ensures company balance matches total customer balances."""
+        total_customer_balance = Customer.objects.aggregate(models.Sum('balance'))[
+            'balance__sum'] or 0.00
+        self.balance = total_customer_balance
+        self.save()
+
+    def __str__(self):
+        return f"Company Account - Balance: GH₵{self.balance}"
 
 
 class Customer(models.Model):
@@ -31,27 +44,29 @@ class Customer(models.Model):
         upload_to='media_file', default='default.jpg')
     created_by = models.ForeignKey(
         Worker,
-        # Set the worker who created this when the worker is deleted
-        on_delete=models.SET(set_customer_creator),
+        on_delete=models.SET_NULL,  # ✅ Use SET_NULL instead of a function
         null=True,
         blank=True,
         related_name='customers_created'
     )
-    joined = models.DateTimeField(
-        auto_now_add=True)  # Changed to DateTimeField
+
+    joined = models.DateTimeField(auto_now_add=True)
     account_number = models.CharField(
-        max_length=30, unique=True, blank=True, null=True
-    )
+        max_length=30, unique=True, blank=True, null=True)
 
     def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
-        # Generate account_number if it doesn't already exist
+        """Save customer balance and update company balance"""
         if not self.account_number:
             self.account_number = self.generate_account_number()
 
-        super().save(*args, **kwargs)  # Save the instance first to access image paths
+        super().save(*args, **kwargs)
+
+        # Update company balance when customer balance changes
+        company = CompanyAccount.get_instance()
+        company.update_balance()
 
         try:
             img_path = self.customer_image.path  # Get the image path
@@ -74,7 +89,6 @@ class Customer(models.Model):
     def generate_account_number(self):
         """Generates a unique account number for each customer."""
         while True:
-            # Prefix with "ACC", current year, and a random alphanumeric string
             account_number = f"DSV-ACC-{now().strftime('%Y%m%d')}-" + ''.join(
                 random.choices(string.ascii_uppercase + string.digits, k=6)
             )
@@ -86,24 +100,21 @@ class Collection(models.Model):
     worker = models.ForeignKey(Worker, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateTimeField(auto_now_add=True)  # Changed to DateTimeField
+    date = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        # Automatically update customer's balance when saving
+        """Increase customer balance and update company balance"""
         self.customer.balance += self.amount
         self.customer.save()
+
+        # Update company balance
+        company = CompanyAccount.get_instance()
+        company.update_balance()
+
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Collection by {self.worker} for {self.customer} on {self.date}"
-
-
-class CompanyAccount(models.Model):
-    balance = models.DecimalField(
-        max_digits=12, decimal_places=2, default=0.00)
-
-    def __str__(self):
-        return f"Company Account - Balance: ${self.balance}"
 
 
 class Deduction(models.Model):
@@ -116,11 +127,31 @@ class Deduction(models.Model):
         User, on_delete=models.CASCADE, related_name="deductions")
     deduction_type = models.CharField(max_length=10, choices=DEDUCTION_CHOICES)
     customer = models.ForeignKey(
-        'Customer', on_delete=models.SET_NULL, null=True, blank=True)
+        Customer, on_delete=models.SET_NULL, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date_deducted = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        """Ensure sufficient balance before deduction"""
+        if self.deduction_type == "customer":
+            if not self.customer:
+                raise ValueError(
+                    "Customer is required for customer deductions.")
+            if self.customer.balance < self.amount:
+                raise ValueError("Insufficient balance in customer's account.")
+            self.customer.balance -= self.amount
+            self.customer.save()
+
+        elif self.deduction_type == "company":
+            company = CompanyAccount.get_instance()
+            if company.balance < self.amount:
+                raise ValueError("Insufficient balance in company account.")
+            company.balance -= self.amount
+            company.save()
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         if self.deduction_type == "customer":
-            return f"${self.amount} deducted from {self.customer.name} by {self.admin.username}"
-        return f"${self.amount} deducted from Company Account by {self.admin.username}"
+            return f"GH₵{self.amount} deducted from {self.customer.name} by {self.admin.username}"
+        return f"GH₵{self.amount} deducted from Company Account by {self.admin.username}"
