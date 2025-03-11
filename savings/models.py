@@ -104,3 +104,23 @@ class CompanyAccount(models.Model):
 
     def __str__(self):
         return f"Company Account - Balance: ${self.balance}"
+
+
+class Deduction(models.Model):
+    DEDUCTION_CHOICES = [
+        ('customer', 'Customer Account'),
+        ('company', 'Company Account')
+    ]
+
+    admin = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="deductions")
+    deduction_type = models.CharField(max_length=10, choices=DEDUCTION_CHOICES)
+    customer = models.ForeignKey(
+        'Customer', on_delete=models.SET_NULL, null=True, blank=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date_deducted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        if self.deduction_type == "customer":
+            return f"${self.amount} deducted from {self.customer.name} by {self.admin.username}"
+        return f"${self.amount} deducted from Company Account by {self.admin.username}"

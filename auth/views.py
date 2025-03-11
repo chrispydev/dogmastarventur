@@ -1,3 +1,5 @@
+from savings.models import Customer, Worker, Collection, Deduction
+from django.shortcuts import render
 from auth.forms import UserRegisterForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
@@ -64,20 +66,38 @@ class CustomPasswordResetDoneView(PasswordResetView):
 class AdminDashboardView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         if not request.user.is_superuser:
-            return render(request, '403.html')  # Redirect non-admin users
+            return render(request, '403.html')  # Restrict non-admin users
 
-        # Aggregate data for dashboard
+        # Aggregate data
         total_customers = Customer.objects.count()
         total_workers = Worker.objects.count()
         total_savings = sum(
             customer.balance for customer in Customer.objects.all())
+        total_collections = sum(
+            collection.amount for collection in Collection.objects.all())
+        total_pending_customers = Customer.objects.filter(balance=0).count()
+        total_weekly_collections = sum(collection.amount for collection in Collection.objects.filter(
+            date__week=1))  # Adjust for actual week filtering
+
+        # Deductions data
+        total_customer_deductions = sum(
+            d.amount for d in Deduction.objects.filter(deduction_type="customer"))
+        total_company_deductions = sum(
+            d.amount for d in Deduction.objects.filter(deduction_type="company"))
         recent_collections = Collection.objects.order_by('-date')[:10]
+        recent_deductions = Deduction.objects.order_by('-date_deducted')[:5]
 
         context = {
             'total_customers': total_customers,
             'total_workers': total_workers,
             'total_savings': total_savings,
+            'total_collections': total_collections,
+            'total_pending_customers': total_pending_customers,
+            'total_weekly_collections': total_weekly_collections,
+            'total_customer_deductions': total_customer_deductions,
+            'total_company_deductions': total_company_deductions,
             'recent_collections': recent_collections,
+            'recent_deductions': recent_deductions,
         }
         return render(request, 'admin_panel/dashboard.html', context)
 
@@ -219,7 +239,8 @@ class AdminRegisterView(View):
             admin_user.is_superuser = True
             admin_user.set_password(form.cleaned_data['password1'])
             admin_user.save()
-            messages.success(request, f'Admin account created for {admin_user.username}!')
+            messages.success(
+                request, f'Admin account created for {admin_user.username}!')
             return redirect('admin_dashboard')
         else:
             admin_form = AdminRegisterForm()
