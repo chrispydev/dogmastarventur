@@ -248,7 +248,7 @@ class RecordCollectionView(LoginRequiredMixin, View):
 
 
 class DeductBalanceView(LoginRequiredMixin, UserPassesTestMixin, FormView):
-    template_name = "auth/deduct_balance.html"
+    template_name = "savings/deduct_balance.html"
     form_class = DeductionForm
     success_url = reverse_lazy('deduct_balance')
 
