@@ -6,101 +6,68 @@
     <a class="add__button button__padding" href="{% url 'deduct_balance' %}">Withdraw Money</a>
   </div>
 
-  <!-- Overview Section -->
+  <!-- Summary Cards -->
   <div class="row my-4">
-    <div class="col-md-3">
-      <div class="card card__border">
-        <div class="card-body text-center">
+    <div class="col-md-4">
+      <div class="card card__border text-center shadow-lg">
+        <div class="card-body">
           <h5>Total Customers</h5>
-          <h2>{{ total_customers }}</h2>
+          <h2 class="text-primary">{{ total_customers }}</h2>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card card__border">
-        <div class="card-body text-center">
+    <div class="col-md-4">
+      <div class="card card__border text-center shadow-lg">
+        <div class="card-body">
           <h5>Total Workers</h5>
-          <h2>{{ total_workers }}</h2>
+          <h2 class="text-success">{{ total_workers }}</h2>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card card__border">
-        <div class="card-body text-center">
-          <h5>Total Collections</h5>
-          <h2>GH₵{{ total_collections }}</h2>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card card__border">
-        <div class="card-body text-center">
-          <h5>Pending Customers</h5>
-          <h2>{{ total_pending_customers }}</h2>
+    <div class="col-md-4">
+      <div class="card card__border text-center shadow-lg">
+        <div class="card-body">
+          <h5>Total Pending Customers</h5>
+          <h2 class="text-danger">{{ total_pending_customers }}</h2>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Weekly Collections & Deductions -->
+  <!-- Financial Overview -->
   <div class="row my-4">
     <div class="col-md-6">
-      <div class="card card__border">
-        <div class="card-body text-center">
+      <div class="card card__border text-center shadow-lg">
+        <div class="card-body">
           <h5>Total Weekly Collections</h5>
-          <h2>GH₵{{ total_weekly_collections }}</h2>
+          <h2 class="text-primary">GH₵{{ total_weekly_collections }}</h2>
         </div>
       </div>
     </div>
     <div class="col-md-6">
-      <div class="card card__border">
-        <div class="card-body text-center">
-          <h5>Total Customer Deductions</h5>
-          <h2>-GH₵{{ total_customer_deductions }}</h2>
+      <div class="card card__border text-center shadow-lg">
+        <div class="card-body">
+          <h5>Total Amount Deducted</h5>
+          <h2 class="text-danger">-GH₵{{ total_deductions }}</h2>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Company Deductions -->
+  <!-- Total Balance -->
   <div class="row my-4">
     <div class="col-md-12">
-      <div class="card card__border">
-        <div class="card-body text-center">
-          <h5>Total Company Deductions</h5>
-          <h2>-GH₵{{ total_company_deductions }}</h2>
+      <div class="card card__border text-center shadow-lg">
+        <div class="card-body">
+          <h5>Total Balance (Company Account)</h5>
+          <h2 class="text-success">GH₵{{ total_balance }}</h2>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Recent Collections Section -->
-  <h3>Recent Collections</h3>
-  <ul class="list-group mt-3">
-    {% for transaction in recent_collections %}
-    <li class="list-group-item">
-      {{ transaction.customer.name }} - GH₵{{ transaction.amount }} - {{ transaction.date|date:"Y-m-d h:i:s a" }}
-    </li>
-    {% empty %}
-    <li class="list-group-item text-center">No recent transactions available</li>
-    {% endfor %}
-  </ul>
-
-  <!-- Recent Deductions Section -->
-  <h3 class="mt-4">Recent Deductions</h3>
-  <ul class="list-group mt-3">
-    {% for deduction in recent_deductions %}
-    <li class="list-group-item">
-      {% if deduction.deduction_type == "customer" %}
-      Customer Deduction - {{ deduction.customer.name }} - GH₵{{ deduction.amount }} - {{
-      deduction.date_deducted|date:"Y-m-d h:i:s a" }}
-      {% else %}
-      Company Deduction - GH₵{{ deduction.amount }} - {{ deduction.date_deducted|date:"Y-m-d h:i:s a" }}
-      {% endif %}
-    </li>
-    {% empty %}
-    <li class="list-group-item text-center">No recent deductions available</li>
-    {% endfor %}
-  </ul>
+ 
 </div>
+
+
 {% endblock %}

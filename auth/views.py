@@ -1,5 +1,4 @@
-from savings.models import Customer, Worker, Collection, Deduction
-from django.shortcuts import render
+import json  # ✅ Import json for safe conversion
 from auth.forms import UserRegisterForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
@@ -9,13 +8,15 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.views import PasswordResetView
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from savings.models import Customer, Worker, Collection
+from savings.models import Customer, Worker, Collection, Deduction
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView
 from auth.forms import CustomerForm, AdminRegisterForm, CustomerLoginForm
 from django.db.models import Sum, Count
 from django.core.paginator import Paginator
 from django.contrib.auth.models import Group
+from django.utils.timezone import now
+from datetime import timedelta
 
 
 class RegisterForm(View):
@@ -63,43 +64,25 @@ class CustomPasswordResetDoneView(PasswordResetView):
         return super().form_valid(form)
 
 
-class AdminDashboardView(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        if not request.user.is_superuser:
-            return render(request, '403.html')  # Restrict non-admin users
+# class AdminDashboardView(LoginRequiredMixin, View):
+#     def get(self, request, *args, **kwargs):
+#         if not request.user.is_superuser:
+#             return render(request, '403.html')  # Redirect non-admin users
 
-        # Aggregate data
-        total_customers = Customer.objects.count()
-        total_workers = Worker.objects.count()
-        total_savings = sum(
-            customer.balance for customer in Customer.objects.all())
-        total_collections = sum(
-            collection.amount for collection in Collection.objects.all())
-        total_pending_customers = Customer.objects.filter(balance=0).count()
-        total_weekly_collections = sum(collection.amount for collection in Collection.objects.filter(
-            date__week=1))  # Adjust for actual week filtering
+#         # Aggregate data for dashboard
+#         total_customers = Customer.objects.count()
+#         total_workers = Worker.objects.count()
+#         total_savings = sum(
+#             customer.balance for customer in Customer.objects.all())
+#         recent_collections = Collection.objects.order_by('-date')[:10]
 
-        # Deductions data
-        total_customer_deductions = sum(
-            d.amount for d in Deduction.objects.filter(deduction_type="customer"))
-        total_company_deductions = sum(
-            d.amount for d in Deduction.objects.filter(deduction_type="company"))
-        recent_collections = Collection.objects.order_by('-date')[:10]
-        recent_deductions = Deduction.objects.order_by('-date_deducted')[:5]
-
-        context = {
-            'total_customers': total_customers,
-            'total_workers': total_workers,
-            'total_savings': total_savings,
-            'total_collections': total_collections,
-            'total_pending_customers': total_pending_customers,
-            'total_weekly_collections': total_weekly_collections,
-            'total_customer_deductions': total_customer_deductions,
-            'total_company_deductions': total_company_deductions,
-            'recent_collections': recent_collections,
-            'recent_deductions': recent_deductions,
-        }
-        return render(request, 'admin_panel/dashboard.html', context)
+#         context = {
+#             'total_customers': total_customers,
+#             'total_workers': total_workers,
+#             'total_savings': total_savings,
+#             'recent_collections': recent_collections,
+#         }
+#         return render(request, 'admin_panel/dashboard.html', context)
 
 
 class AddCustomerView(View):
@@ -177,38 +160,61 @@ class CollectionDetailView(View):
         return render(request, 'savings/collection_detail.html', context)
 
 
-class AdminDashboardView(View):
+class AdminDashboardView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        # Total statistics
-        total_customers = Customer.objects.count()
-        total_workers = Worker.objects.count()
-        total_collections = Collection.objects.aggregate(
-            total_amount=Sum('amount'))['total_amount'] or 0
-        total_pending_customers = Customer.objects.filter(
-            collection__isnull=True
-        ).count()
-
-        # Weekly collections
-        from datetime import timedelta
-        from django.utils.timezone import now
-
-        one_week_ago = now() - timedelta(days=7)
-        weekly_collections = Collection.objects.filter(date__gte=one_week_ago)
-        total_weekly_collections = weekly_collections.aggregate(
-            total_amount=Sum('amount'))['total_amount'] or 0
-
-        # Recent collections
-        recent_collections = Collection.objects.order_by('-date')[:5]
-
-        # Pass data to the context
+        # Existing context
         context = {
-            'total_customers': total_customers,
-            'total_workers': total_workers,
-            'total_collections': total_collections,
-            'total_pending_customers': total_pending_customers,
-            'total_weekly_collections': total_weekly_collections,
-            'recent_collections': recent_collections,
+            'total_customers': 0,
+            'total_workers': 0,
+            'total_collections': 0,
+            'total_weekly_collections': 0,
+            'total_deductions': 0,
+            'total_balance': 0,
+            'total_pending_customers': 0,
+            'daily_collections': [],
         }
+
+        # Fetch total collections
+        total_collections = Collection.objects.aggregate(Sum('amount'))[
+            'amount__sum'] or 0
+
+        # Fetch total weekly collections
+        start_of_week = now().date() - timedelta(days=now().weekday())
+        total_weekly_collections = Collection.objects.filter(
+            date__gte=start_of_week).aggregate(Sum('amount'))['amount__sum'] or 0
+
+        # Fetch total deductions
+        total_deductions = Deduction.objects.aggregate(Sum('amount'))[
+            'amount__sum'] or 0
+
+        # Calculate total balance
+        total_balance = float(total_collections) - \
+            float(total_deductions)  # ✅ Convert to float
+
+        # Get daily collections for the last 7 days
+        today = now().date()
+        daily_collections = []
+        for i in range(7):
+            day = today - timedelta(days=6 - i)
+            total_for_day = Collection.objects.filter(
+                date__date=day).aggregate(Sum('amount'))['amount__sum'] or 0
+            daily_collections.append(
+                float(total_for_day))  # ✅ Convert to float
+
+        # Convert to JSON-safe format
+        context.update({
+            'total_collections': total_collections,
+            'total_weekly_collections': total_weekly_collections,
+            'total_deductions': total_deductions,
+            'total_balance': total_balance,
+            'total_pending_customers': Customer.objects.exclude(
+                id__in=Collection.objects.filter(
+                    date__gte=today - timedelta(days=7)).values_list('customer_id', flat=True)
+            ).count(),
+            # ✅ Convert list to JSON string
+            'daily_collections': json.dumps(daily_collections),
+        })
+
         return render(request, 'auth/admin_dashboard.html', context)
 
 
