@@ -1,3 +1,4 @@
+from savings.models import Customer  # Ensure you have the correct import
 from datetime import datetime
 from savings.models import Collection  # Ensure correct import
 from django.db.models.functions import TruncMonth
@@ -332,28 +333,40 @@ class CustomerDashboardView(View):
         if not customer_id:
             return redirect('customer_login')
 
+        # Fetch customer details
         customer = Customer.objects.get(id=customer_id)
-        collections = customer.collection_set.all().order_by(
-            '-date')  # Assuming the relationship exists
+
+        # Fetch collections and deductions, ordered by most recent
+        collections = customer.collection_set.all().order_by('-date')
+        deductions = customer.deduction_set.all().order_by('-date_deducted')  # FIXED
+
         return render(request, self.template_name, {
             'customer': customer,
             'collections': collections,
+            'deductions': deductions,  # Make sure to pass this to the template
         })
 
 
 class CustomerLoginView(View):
+    """View for customers to log in using account number and full name."""
     template_name = 'auth/customer_login.html'
 
     def get(self, request):
-        form = CustomerLoginForm()
-        return render(request, self.template_name, {'form': form})
+        return render(request, self.template_name)
 
     def post(self, request):
-        form = CustomerLoginForm(request.POST)
-        if form.is_valid():
-            customer = form.cleaned_data['customer']
-            # Save customer info in the session for simplicity
+        account_number = request.POST.get('account_number')
+        name = request.POST.get('full_name')
+
+        try:
+            # Check if customer exists
+            customer = Customer.objects.get(
+                account_number=account_number, name=name)
+            # Store customer info in session
             request.session['customer_id'] = customer.id
-            # Redirect to a customer dashboard
+            messages.success(request, "Login successful!")
             return redirect('customer_dashboard')
-        return render(request, self.template_name, {'form': form})
+        except Customer.DoesNotExist:
+            messages.error(request, "Invalid account number or full name.")
+
+        return render(request, self.template_name)

@@ -1,18 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block content %}
 <section class="container">
+    <!-- Logo -->
     <div class="dashboard__logo">
-        <img src="{% static 'img/logo.webp' %}" alt="">
+        <img src="{% static 'img/logo.webp' %}" alt="Dogma Star Ventures Logo">
         <span class="logo__text">DOGMA STAR VENTURES</span>
     </div>
+
+    <!-- Customer Details -->
     <div class="dashboard__content">
         <h2>Welcome, {{ customer.name }}</h2>
         <p><strong>Account Number:</strong> {{ customer.account_number }}</p>
-        <p><strong>Balance:</strong> ${{ customer.balance }}</p>
+        <p><strong>Balance:</strong> GH₵{{ customer.balance }}</p>
 
+        <!-- Collections Table -->
         <h3>Your Collections</h3>
         <table class="customer__table">
             <thead>
@@ -24,12 +27,35 @@
             <tbody>
                 {% for collection in collections %}
                 <tr>
-                    <td>${{ collection.amount }}</td>
+                    <td class="text-success">GH₵{{ collection.amount }}</td>
                     <td>{{ collection.date }}</td>
                 </tr>
                 {% empty %}
                 <tr>
                     <td colspan="2">No collections found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Deductions Table -->
+        <h3>Your Deductions</h3>
+        <table class="customer__table">
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for deduction in deductions %}
+                <tr>
+                    <td class="text-danger">- GH₵{{ deduction.amount }}</td>
+                    <td>{{ deduction.date }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">No deductions found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
