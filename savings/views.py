@@ -274,7 +274,7 @@ class DeductBalanceView(LoginRequiredMixin, UserPassesTestMixin, FormView):
                 )
 
                 messages.success(
-                    self.request, f"${amount} deducted from {customer.name}.")
+                    self.request, f"GH₵{amount} deducted from {customer.name}.")
             else:
                 messages.error(
                     self.request, "Insufficient balance in customer's account.")
@@ -292,7 +292,7 @@ class DeductBalanceView(LoginRequiredMixin, UserPassesTestMixin, FormView):
                 )
 
                 messages.success(
-                    self.request, f"${amount} deducted from the company account.")
+                    self.request, f"GH₵{amount} deducted from the company account.")
             else:
                 messages.error(
                     self.request, "Insufficient balance in the company account.")
