@@ -1,3 +1,5 @@
+from datetime import datetime
+from savings.models import Collection  # Ensure correct import
 from django.db.models.functions import TruncMonth
 from savings.models import Collection, Deduction, Customer, Worker
 from django.shortcuts import render
@@ -141,19 +143,36 @@ class CustomerDetailView(DetailView):
 
 
 class AllCollectionsView(View):
-    """View to display all collections."""
+    """View to display all collections with filtering by date."""
 
     def get(self, request, *args, **kwargs):
         collections = Collection.objects.select_related(
             'worker', 'customer').order_by('-date')
-        # Display 10 collections per page
+
+        # Get filter parameters from request
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+
+        # Apply date filter if both dates are provided
+        if start_date and end_date:
+            try:
+                start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+                end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+                collections = collections.filter(
+                    date__range=[start_date, end_date])
+            except ValueError:
+                pass  # Ignore invalid date formats
+
+        # Paginate collections (10 per page)
         paginator = Paginator(collections, 10)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
         context = {
             'collections': collections,
-            'page_obj': page_obj
+            'page_obj': page_obj,
+            'start_date': start_date,
+            'end_date': end_date,
         }
         return render(request, 'savings/all_collections.html', context)
 
