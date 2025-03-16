@@ -54,6 +54,44 @@
     </div>
   </div>
 
+  <!-- Monthly Collections -->
+  <div class="row my-4">
+    <div class="col-md-12">
+      <div class="card card__border text-center shadow-lg">
+        <div class="card-body">
+          <h5>Last Three Months' Collections</h5>
+          <ul class="list-group">
+            {% for month, amount in monthly_collections.items %}
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{{ month }}</span>
+              <span class="text-primary">GH₵{{ amount }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Yearly Collections -->
+  <div class="row my-4">
+    <div class="col-md-12">
+      <div class="card card__border text-center shadow-lg">
+        <div class="card-body">
+          <h5>Last Three Years' Collections</h5>
+          <ul class="list-group">
+            {% for year, amount in yearly_collections.items %}
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{{ year }}</span>
+              <span class="text-success">GH₵{{ amount }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Total Balance -->
   <div class="row my-4">
     <div class="col-md-12">
@@ -65,9 +103,5 @@
       </div>
     </div>
   </div>
-
- 
 </div>
-
-
 {% endblock %}

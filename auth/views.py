@@ -1,3 +1,10 @@
+from django.db.models.functions import TruncMonth
+from savings.models import Collection, Deduction, Customer, Worker
+from django.shortcuts import render
+import json
+from django.db.models import Sum
+from django.db.models import Count
+from django.db.models.functions import TruncMonth, TruncYear
 import json  # ✅ Import json for safe conversion
 from auth.forms import UserRegisterForm
 from django.contrib.auth.forms import AuthenticationForm
@@ -162,16 +169,17 @@ class CollectionDetailView(View):
 
 class AdminDashboardView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        # Existing context
         context = {
-            'total_customers': 0,
-            'total_workers': 0,
+            'total_customers': Customer.objects.count(),
+            'total_workers': Worker.objects.count(),
             'total_collections': 0,
             'total_weekly_collections': 0,
             'total_deductions': 0,
             'total_balance': 0,
             'total_pending_customers': 0,
             'daily_collections': [],
+            'monthly_collections': [],
+            'yearly_collections': [],
         }
 
         # Fetch total collections
@@ -188,8 +196,7 @@ class AdminDashboardView(LoginRequiredMixin, View):
             'amount__sum'] or 0
 
         # Calculate total balance
-        total_balance = float(total_collections) - \
-            float(total_deductions)  # ✅ Convert to float
+        total_balance = float(total_collections) - float(total_deductions)
 
         # Get daily collections for the last 7 days
         today = now().date()
@@ -198,10 +205,33 @@ class AdminDashboardView(LoginRequiredMixin, View):
             day = today - timedelta(days=6 - i)
             total_for_day = Collection.objects.filter(
                 date__date=day).aggregate(Sum('amount'))['amount__sum'] or 0
-            daily_collections.append(
-                float(total_for_day))  # ✅ Convert to float
+            daily_collections.append(float(total_for_day))
 
-        # Convert to JSON-safe format
+        # Get the last 3 months dynamically
+        three_months_ago = now().replace(day=1) - timedelta(days=90)
+
+        # Fetch monthly collections only for the last 3 months
+        monthly_collections = Collection.objects.filter(date__gte=three_months_ago) \
+            .annotate(month=TruncMonth('date')) \
+            .values('month') \
+            .annotate(total=Sum('amount')) \
+            .order_by('-month')[:3]  # Fetch only last 3 months
+
+        # Convert to dictionary format { "March": 5000, "April": 3000 }
+        monthly_data = {entry['month'].strftime(
+            '%B'): entry['total'] for entry in monthly_collections}
+
+        # Fetch yearly collections
+        yearly_collections = Collection.objects.values_list('date', 'amount')
+        yearly_data = {}
+        for date, amount in yearly_collections:
+            year = date.year
+            if year in yearly_data:
+                yearly_data[year] += amount
+            else:
+                yearly_data[year] = amount
+
+        # Update context with JSON-safe data
         context.update({
             'total_collections': total_collections,
             'total_weekly_collections': total_weekly_collections,
@@ -211,8 +241,9 @@ class AdminDashboardView(LoginRequiredMixin, View):
                 id__in=Collection.objects.filter(
                     date__gte=today - timedelta(days=7)).values_list('customer_id', flat=True)
             ).count(),
-            # ✅ Convert list to JSON string
             'daily_collections': json.dumps(daily_collections),
+            'monthly_collections': monthly_data,
+            'yearly_collections': yearly_data,
         })
 
         return render(request, 'auth/admin_dashboard.html', context)
