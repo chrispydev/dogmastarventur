@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="login__form">
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border__bottom mb-4 legend__heading">Create Super User</legend>
+            <div class="form-group">
+                <label for="{{ admin_form.username.id_for_label }}">Username</label>
+                {{ admin_form.username }}
+                {% if form.username.errors %}
+                {% for error in form.username.errors %}
+                <p class="error-message text-danger">{{ error }}</p>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ admin_form.email.id_for_label }}">Email</label>
+                {{ admin_form.email }}
+                {% if form.email.errors %}
+                {% for error in form.email.errors %}
+                <p class="error-message text-danger">{{ error }}</p>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ admin_form.password1.id_for_label }}">Password</label>
+                {{ admin_form.password1 }}
+                {% if form.password1.errors %}
+                {% for error in form.password1.errors %}
+                <p class="error-message text-danger">{{ error }}</p>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ admin_form.password2.id_for_label }}">Confirm Password</label>
+                {{ admin_form.password2 }}
+                {% if form.password2.errors %}
+                {% for error in form.password2.errors %}
+                <p class="error-message text-danger">{{ error }}</p>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <!-- Render other fields of the form in a similar way -->
+        </fieldset>
+        <div class="form-group">
+            <button class="form__submit" type="submit">Sign up</button>
+        </div>
+    </form>
+    <div class="border__top pt-3">
+        <small class="text-muted">Already have an account?
+            <a id="signup" class="ml-2 signup" href="{% url 'login' %}">Log in</a></small>
+    </div>
+</div>
+{% endblock %}

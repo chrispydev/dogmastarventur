@@ -282,6 +282,29 @@ class CustomerAdminDetailView(DetailView):
     context_object_name = 'customer'
 
 
+class SuperAdminRegisterView(View):
+    def get(self, request):
+        admin_form = AdminRegisterForm()
+        template_name = 'auth/super_admin_register.html'
+        return render(request, template_name, {'admin_form': admin_form})
+
+    def post(self, request):
+        form = AdminRegisterForm(request.POST)
+        if form.is_valid():
+            admin_user = form.save(commit=False)
+            admin_user.is_staff = True
+            admin_user.is_superuser = True
+            admin_user.set_password(form.cleaned_data['password1'])
+            admin_user.save()
+            messages.success(
+                request, f'Admin account created for {admin_user.username}!')
+            return redirect('admin_dashboard')
+        else:
+            admin_form = AdminRegisterForm()
+            template_name = 'auth/admin_register.html'
+        return render(request, template_name, {'form': form, 'admin_form': admin_form})
+
+
 class AdminRegisterView(View):
     def get(self, request):
         admin_form = AdminRegisterForm()
@@ -292,7 +315,7 @@ class AdminRegisterView(View):
         form = AdminRegisterForm(request.POST)
         if form.is_valid():
             admin_user = form.save(commit=False)
-            admin_user.is_staff = True
+            admin_user.is_staff = False
             admin_user.is_superuser = True
             admin_user.set_password(form.cleaned_data['password1'])
             admin_user.save()
