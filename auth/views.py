@@ -95,7 +95,7 @@ class CustomPasswordResetDoneView(PasswordResetView):
 #         return render(request, 'admin_panel/dashboard.html', context)
 
 
-class AddCustomerView(View):
+class AddCustomerView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         form = CustomerForm()
         return render(request, 'auth/add_customer.html', {'form': form})
@@ -115,7 +115,7 @@ class AddCustomerView(View):
         return render(request, 'auth/add_customer.html', {'form': form})
 
 
-class CustomerListView(ListView):
+class CustomerListView(LoginRequiredMixin, ListView):
     model = Customer
     template_name = 'auth/customer_list.html'
     context_object_name = 'customers'
@@ -129,7 +129,7 @@ class CustomerListView(ListView):
         return Customer.objects.filter(id__in=customer_ids).distinct()
 
 
-class CustomerDetailView(DetailView):
+class CustomerDetailView(LoginRequiredMixin, DetailView):
     model = Customer
     template_name = 'auth/customer_detail.html'
     context_object_name = 'customer'
@@ -143,7 +143,7 @@ class CustomerDetailView(DetailView):
         return Customer.objects.filter(id__in=customer_ids).distinct()
 
 
-class AllCollectionsView(View):
+class AllCollectionsView(LoginRequiredMixin, View):
     """View to display all collections with filtering by date."""
 
     def get(self, request, *args, **kwargs):
@@ -178,7 +178,7 @@ class AllCollectionsView(View):
         return render(request, 'savings/all_collections.html', context)
 
 
-class CollectionDetailView(View):
+class CollectionDetailView(LoginRequiredMixin, View):
     def get(self, request, pk, *args, **kwargs):
         collection = get_object_or_404(Collection, pk=pk)
         context = {
@@ -269,14 +269,14 @@ class AdminDashboardView(LoginRequiredMixin, View):
         return render(request, 'auth/admin_dashboard.html', context)
 
 
-class CustomerAdminListView(ListView):
+class CustomerAdminListView(LoginRequiredMixin, ListView):
     model = Customer
     template_name = 'auth/customer_admin_list.html'
     context_object_name = 'customers'
     paginate_by = 10  # Number of customers per page
 
 
-class CustomerAdminDetailView(DetailView):
+class CustomerAdminDetailView(LoginRequiredMixin, DetailView):
     model = Customer
     template_name = 'auth/customer_admin_detail.html'
     context_object_name = 'customer'

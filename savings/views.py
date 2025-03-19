@@ -97,7 +97,7 @@ class WorkerDashboardView(LoginRequiredMixin, View):
         return render(request, 'savings/worker_dashboard.html', context)
 
 
-class AddCollectionView(View):
+class AddCollectionView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         try:
             # Ensure the logged-in user is a worker

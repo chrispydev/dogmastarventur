@@ -51,7 +51,7 @@
                 {% for deduction in deductions %}
                 <tr>
                     <td class="text-danger">- GH₵{{ deduction.amount }}</td>
-                    <td>{{ deduction.date }}</td>
+                    <td>{{ deduction.date_deducted }}</td>
                 </tr>
                 {% empty %}
                 <tr>
