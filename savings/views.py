@@ -1,3 +1,5 @@
+from django.http import HttpResponseRedirect
+from django.db import transaction
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -258,43 +260,66 @@ class DeductBalanceView(LoginRequiredMixin, UserPassesTestMixin, FormView):
     def form_valid(self, form):
         deduction_type = form.cleaned_data['deduction_type']
         amount = form.cleaned_data['amount']
+        print(f"This is the {amount} you entered")
         admin = self.request.user
 
-        if deduction_type == 'customer':
-            customer = form.cleaned_data['customer']
-            if customer and customer.balance >= amount:
-                customer.balance -= amount
-                customer.save()
+        with transaction.atomic():  # Ensures deduction happens only once
+            if deduction_type == 'customer':
+                customer = form.cleaned_data['customer']
 
-                Deduction.objects.create(
-                    admin=admin,
-                    deduction_type='customer',
-                    customer=customer,
-                    amount=amount
-                )
+                # Lock the row to prevent multiple deductions
+                customer = Customer.objects.select_for_update().get(id=customer.id)
 
-                messages.success(
-                    self.request, f"GH₵{amount} deducted from {customer.name}.")
-            else:
-                messages.error(
-                    self.request, "Insufficient balance in customer's account.")
+                if customer.balance >= amount:
+                    print(
+                        f"Before Deduction - {customer.name}: GH₵{customer.balance}")
 
-        elif deduction_type == 'company':
-            company_account, _ = CompanyAccount.objects.get_or_create()
-            if company_account.balance >= amount:
-                company_account.balance -= amount
-                company_account.save()
+                    customer.balance - amount
+                    customer.save()
 
-                Deduction.objects.create(
-                    admin=admin,
-                    deduction_type='company',
-                    amount=amount
-                )
+                    Deduction.objects.create(
+                        admin=admin,
+                        deduction_type='customer',
+                        customer=customer,
+                        amount=amount
+                    )
 
-                messages.success(
-                    self.request, f"GH₵{amount} deducted from the company account.")
-            else:
-                messages.error(
-                    self.request, "Insufficient balance in the company account.")
+                    print(
+                        f"After Deduction - {customer.name}: GH₵{customer.balance}")
 
-        return super().form_valid(form)
+                    messages.success(
+                        self.request, f"GH₵{amount} deducted from {customer.name}.")
+                else:
+                    messages.error(
+                        self.request, "Insufficient balance in customer's account.")
+
+            elif deduction_type == 'company':
+                company_account, _ = CompanyAccount.objects.get_or_create()
+
+                # Lock the row to prevent multiple deductions
+                company_account = CompanyAccount.objects.select_for_update().get(id=company_account.id)
+
+                if company_account.balance >= amount:
+                    print(
+                        f"Before Deduction - Company Account: GH₵{company_account.balance}")
+
+                    company_account.balance - amount
+                    company_account.save()
+
+                    Deduction.objects.create(
+                        admin=admin,
+                        deduction_type='company',
+                        amount=amount
+                    )
+
+                    print(
+                        f"After Deduction - Company Account: GH₵{company_account.balance}")
+
+                    messages.success(
+                        self.request, f"GH₵{amount} deducted from the company account.")
+                else:
+                    messages.error(
+                        self.request, "Insufficient balance in the company account.")
+
+        # Ensures a proper redirect to prevent duplicate submission
+        return HttpResponseRedirect(self.success_url)
