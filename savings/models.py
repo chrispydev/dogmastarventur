@@ -97,24 +97,29 @@ class Customer(models.Model):
 
 
 class Collection(models.Model):
-    worker = models.ForeignKey(Worker, on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    worker = models.ForeignKey(
+        Worker, on_delete=models.SET_DEFAULT, default=None)
+    customer = models.ForeignKey(
+        Customer, on_delete=models.SET_NULL, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateTimeField(auto_now_add=True)
+    customer_name = models.CharField(max_length=150, blank=True)
 
     def save(self, *args, **kwargs):
-        """Increase customer balance and update company balance"""
-        self.customer.balance += self.amount
-        self.customer.save()
+        """Store customer name, increase balance, and update company balance"""
+        if self.customer:
+            self.customer_name = self.customer.name  # Store customer's name
+            self.customer.balance += self.amount
+            self.customer.save()
 
-        # Update company balance
-        company = CompanyAccount.get_instance()
-        company.update_balance()
+            # Update company balance
+            company = CompanyAccount.get_instance()
+            company.update_balance()
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Collection by {self.worker} for {self.customer} on {self.date}"
+        return f"Collection by {self.worker} for {self.customer_name} on {self.date}"
 
 
 class Deduction(models.Model):
@@ -153,5 +158,6 @@ class Deduction(models.Model):
 
     def __str__(self):
         if self.deduction_type == "customer":
-            return f"GH₵{self.amount} deducted from {self.customer.name} by {self.admin.username}"
+            customer_name = self.customer.name if self.customer else "Unknown Customer"
+            return f"GH₵{self.amount} deducted from {customer_name} by {self.admin.username}"
         return f"GH₵{self.amount} deducted from Company Account by {self.admin.username}"

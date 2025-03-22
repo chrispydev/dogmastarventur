@@ -37,7 +37,7 @@
           {% for collection in page_obj %}
           <tr>
             <td>{{ collection.date|date:"F d, Y" }}</td>
-            <td>{{ collection.customer.name }}</td>
+            <td>{{ collection.customer_name }}</td>
             <td>{{ collection.worker.user.username }}</td>
             <td class="text-success">GH₵{{ collection.amount }}</td>
             <td class="text-info"><a class="details__link" href="{% url 'collection_detail' collection.id %}">
